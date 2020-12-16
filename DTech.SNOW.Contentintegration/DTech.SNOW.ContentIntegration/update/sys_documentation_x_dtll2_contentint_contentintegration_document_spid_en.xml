@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_documentation element="spid" label="spId" language="en" table="x_dtll2_contentint_contentintegration_document">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>spid</element>
+            <help/>
+            <hint/>
+            <label>spId</label>
+            <language>en</language>
+            <name>x_dtll2_contentint_contentintegration_document</name>
+            <plural>spIds</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>dshilkret</sys_created_by>
+            <sys_created_on>2018-06-15 18:35:27</sys_created_on>
+            <sys_customer_update>false</sys_customer_update>
+            <sys_id>c7d6b154dbbe9f402372e1d3ca96190b</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>spId</sys_name>
+            <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+            <sys_policy/>
+            <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+            <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+            <sys_update_name>sys_documentation_x_dtll2_contentint_contentintegration_document_spid_en</sys_update_name>
+            <sys_updated_by>dshilkret</sys_updated_by>
+            <sys_updated_on>2018-06-15 18:35:27</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

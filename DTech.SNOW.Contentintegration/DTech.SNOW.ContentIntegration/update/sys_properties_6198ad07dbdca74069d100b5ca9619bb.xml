@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices>https://login.microsoftonline.com/</choices>
+        <description>Instance login url.</description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>true</is_private>
+        <name>x_dtll2_contentint.instance_login_url</name>
+        <read_roles/>
+        <suffix>instance_login_url</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>bkeener</sys_created_by>
+        <sys_created_on>2018-09-06 20:11:39</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>6198ad07dbdca74069d100b5ca9619bb</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_dtll2_contentint.instance_login_url</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sys_properties_6198ad07dbdca74069d100b5ca9619bb</sys_update_name>
+        <sys_updated_by>bkeener</sys_updated_by>
+        <sys_updated_on>2018-09-06 20:11:39</sys_updated_on>
+        <type>string</type>
+        <value>https://login.microsoftonline.com/</value>
+        <write_roles/>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=6198ad07dbdca74069d100b5ca9619bb"/>
+</record_update>

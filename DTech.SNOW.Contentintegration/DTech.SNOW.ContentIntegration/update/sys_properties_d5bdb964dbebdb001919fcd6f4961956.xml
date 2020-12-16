@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices/>
+        <description>sharepoint integration url - to get sharepoint ids for a drive item</description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_dtll2_contentint.sp_suffix_3</name>
+        <read_roles>x_dtll2_contentint.contentintegration_task_user</read_roles>
+        <suffix>sp_suffix_3</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>btoole</sys_created_by>
+        <sys_created_on>2018-07-23 20:31:23</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>d5bdb964dbebdb001919fcd6f4961956</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_dtll2_contentint.sp_suffix_3</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sys_properties_d5bdb964dbebdb001919fcd6f4961956</sys_update_name>
+        <sys_updated_by>btoole</sys_updated_by>
+        <sys_updated_on>2018-07-27 17:10:49</sys_updated_on>
+        <type>string</type>
+        <value>?$select=sharepointids</value>
+        <write_roles>admin</write_roles>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=d5bdb964dbebdb001919fcd6f4961956"/>
+</record_update>

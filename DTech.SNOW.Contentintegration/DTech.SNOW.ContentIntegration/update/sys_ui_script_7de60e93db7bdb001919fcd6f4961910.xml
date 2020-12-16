@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_dtll2_contentint.dt sp api v0.5.0</name>
+        <script><![CDATA[//----------------------------------------------------------------------
+// DTTaskerSharePoint v1.0.0
+// @preserve Copyright (c) Discover Technologies, LLC
+// @author Discover Technologies - Product Development
+//----------------------------------------------------------------------
+
+var DTTaskerSharePoint = (function () {
+    'use strict'; 
+
+    /**
+     * DTTaskerSharePoint 
+     *  @property {string} site - the SharePoint site the client will be performing operations on
+     *  @property {string} list - the document library connected to the Tasker application
+     */
+
+
+
+    /**
+     * @constructor
+     * @param {string} refSite - the root web URL of the SharePoint site
+     * @param {string} refList = the Document Library name related to the Tasker connection
+     */ 
+    DTTaskerSharePoint = function (refSite, refList) {
+        this.site = refSite;
+        this.list = refList;
+    };
+
+    /**
+     * builds a REST uri using the site and specified endpoint
+     * @param {any} endpooint
+     */
+    DTTaskerSharePoint.prototype.buildSPRestUri = function (endpooint) {
+        var url = this.site;
+
+        // remove the trailing /if it exists
+        if (url[url.length - 1] == '/') {
+            url = url.substring(0, url.length - 1);
+        }
+
+        // add the endpoint
+        url += endpooint;
+
+        // return the result
+        return url;
+    };
+
+    DTTaskerSharePoint.prototype.buildAuthToken = function (token) {
+        var bearer = token;
+
+        // ensure the token contains the Bearer prefix
+        if (!bearer.startsWith('Bearer')) {
+            bearer = 'Bearer ' + bearer;
+        }
+        // return the auth token
+        return bearer;
+    };
+
+    DTTaskerSharePoint.prototype.createTaskIdMeta = function (name, value) {
+        var meta = '{\'__metadata\':{\'type\':\'SP.ListItem\'}, \'' + name + '\':\'' + value + '\'}';
+
+        return meta;
+    };
+
+    DTTaskerSharePoint.prototype.getSPQuery = function (endpoint, token) {
+        var url = this.buildSPRestUri(endpoint);
+        var bearer = this.buildAuthToken(token);
+        var result = null;
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            crossDomain: true,
+            async: false,
+            headers: {
+                'Accept': 'application/json; odata=verbose',
+                'Authorization': bearer
+            },
+            success: function (data) {
+                //alert('success' + data);
+                result = data;
+
+            },
+            error: function (xhr, e, error) {
+                alert('error' + error + e + xhr);
+            }
+
+        });
+
+        return result;
+    };
+	
+    DTTaskerSharePoint.prototype.getSPListItems = function (token) {
+        var endpoint = '/_api/web/Lists/GetByTitle(\'' + this.list + '\')/items';
+        var result = this.getSPQuery(endpoint, token);
+
+        return result;
+    };
+	
+    DTTaskerSharePoint.prototype.getSPDocumentsByTaskId = function (token, taskId) {
+        var endpoint = '/_api/web/Lists/GetByTitle(\'' + this.list + '\')/items?$filter=(TaskId eq ' + taskId + ')';
+        var result = this.getSPQuery(endpoint, token);
+
+        return result;
+    };
+	
+	//Used by DocIntegrator
+    DTTaskerSharePoint.prototype.getSPDocumentsByItemId = function (token, item, itemId) {
+        var endpoint = '/_api/web/Lists/GetByTitle(\'' + this.list + '\')/items?$filter=('+ item +' eq \'' + itemId + '\')&$expand=FieldValuesAsText&$select=ServerRedirectedEmbedUri,*';
+        var result = this.getSPQuery(endpoint, token);
+
+        return result;
+    };
+
+    DTTaskerSharePoint.prototype.postSPDocumentMeta = function (itemRef, token, meta) {
+        var itemId = -1;
+        var urlProps = itemRef + '/listitemallfields';
+        var urlListItem = '';
+        var bearer = this.buildAuthToken(token);
+
+        // get the document list item id
+        $.ajax({
+            url: urlProps,
+            type: 'GET',
+            crossDomain: true,
+            async: false,
+            headers: {
+                'Accept': 'application/json; odata=verbose',
+                'Authorization': bearer
+            },
+            success: function (data, status) {
+                // get the item id
+
+                itemId = data.d.ID;
+                urlListItem = data.d.__metadata.uri;
+            },
+            error: function (xhr, e, error) {
+                alert('error' + error + e + xhr);
+            }
+        });
+
+        // update the list item 
+        $.ajax({
+            url: urlListItem,
+            type: 'POST',
+            crossDomain: true,
+            async: false,
+            data: meta,
+            length: meta.length,
+            headers: {
+                'Accept': 'application/json; odata=verbose',
+                'Authorization': bearer,
+                'Content-Type': 'application/json; odata=verbose',
+                'IF-MATCH': '*',
+                'X-HTTP-Method': 'MERGE'
+            },
+            error: function (xhr, e, error) {
+                alert('error' + error + e + xhr);
+            }
+        });
+    };
+
+    // https://social.msdn.microsoft.com/Forums/office/en-US/357f5c7d-77b1-4d04-9956-3498ce33a5e0/upload-big-file-to-sharepoint-with-rest-api
+	// TODO: Need to look at adding a parameter for folder specification.
+    DTTaskerSharePoint.prototype.postSPFile = function (token, filename, buffer, meta) {
+        var endpoint = '/_api/web/lists/getbytitle(\'' + this.list + '\')/rootfolder/files/add(url=\'' + filename + '\', overwrite = true)';
+        var url = this.buildSPRestUri(endpoint);
+        var bearer = this.buildAuthToken(token);
+        var result = null;
+        var localRef = this;
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            crossDomain: true,
+            //async: false,
+            data: buffer,
+            length: buffer.byteLength,
+            processData: false,
+            headers: {
+                'Accept': 'application/json; odata=verbose',
+                'Authorization': bearer
+            },
+            success: function (data, status) {
+                // get the item id
+                result = data.d.__metadata.id;
+
+                result = data.d.__metadata.id;
+
+                localRef.postSPDocumentMeta(data.d.__metadata.id, token, meta);
+            },
+            error: function (xhr, e, error) {
+                alert('error' + error + e + xhr);
+            }
+        });
+
+        return result;
+    };
+
+
+    return DTTaskerSharePoint;
+}());]]></script>
+        <script_name>dt sp api v0.5.0</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>bkeener</sys_created_by>
+        <sys_created_on>2018-08-13 20:30:34</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>7de60e93db7bdb001919fcd6f4961910</sys_id>
+        <sys_mod_count>34</sys_mod_count>
+        <sys_name>x_dtll2_contentint.dt sp api v0.5.0</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sys_ui_script_7de60e93db7bdb001919fcd6f4961910</sys_update_name>
+        <sys_updated_by>bkeener</sys_updated_by>
+        <sys_updated_on>2018-09-26 21:59:27</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function($scope, $rootScope, $location, spUtil, $timeout, spAriaFocusManager, $uibModal, spModal, nowAttachmentHandler) {
+  var c = this; 
+  
+	var tNum = $scope.data.number;
+
+	$scope.attachmentHandler = [];
+	
+  $scope.selectedTable = {
+    displayValue: $scope.data.table,
+    value: $scope.data.table
+  };
+	
+  var shared = {};
+  c.openModal = function() {
+    c.modalInstance = spModal.open({
+      widget: 'docint-sp-upload',
+			title: "Upload to SharePoint for " + $scope.data.number ,
+			widgetInput: {fieldname: $scope.data.fieldName, fieldvalue: tNum},
+			widgetOptions: {fieldname: $scope.data.fieldName, fieldvalue: tNum},
+			buttons: [{label: 'Close', primary: true}],
+			shared: shared
+    }).then(function(){
+			//want to let the other widgets know to update					
+			spUtil.update($scope).then(function(){
+				$rootScope.$broadcast("docint.reload_documents", {spitemid: shared.spitemid});
+				$timeout(function(){
+						angular.element("ul.nav.nav-tabs li#sp a").filter(function(){ return $(this).data("target") == '#x_dtll2_contentint_contentintegration_document';}).click();						  
+				});				
+			});			
+		});
+  }
+
+  function setPermalink(table) {
+    $scope.ignoreLocationChange = true;
+    var searchParms = $location.search();
+    var search = {
+      spa: 1,
+      table: table,
+      id: searchParms.id
+    };
+    $location.search(search);
+  }
+  
+  c.action = function(state) {    
+    c.data.op = state;
+    c.data.state = state;
+    c.server.update();    
+  }
+  
+	function setDocCount(count){
+		for (var index in $scope.data.f._related_lists)
+			{
+				var currentList = $scope.data.f._related_lists[index];
+				if (currentList.table == $scope.data.docint_docs_table){
+					currentList.count = count;
+				}
+			}
+	}
+	//This runs at first load.
+	$scope.$on("docint.update_count", function(event, e){
+		if (e && e.count){
+		setDocCount(e.count);
+		}
+		else{
+			setDocCount(0);
+		}
+	});
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.main{
+margin-left:5px;
+}
+
+.none{
+  display: none;
+}
+.btn-form-menu {
+	vertical-align: inherit;
+  padding: inherit;
+  background: none;
+}
+
+.panel-title {
+  word-wrap: break-word;
+}
+
+.comment {
+	font-weight: bold;
+	margin-top: 2px;
+	margin-bottom: 2px;
+}
+.mce-panel, .mce-btn {
+	background-image: none;
+	background-color: #f0f3f4;
+}
+
+.action-btn {
+  margin-right: 5px;
+}
+
+.timeline-container {
+   max-height: 50vh;
+   height: 100%;
+   overflow-y: auto;
+}
+
+.panel .panel {
+    height: auto !important;
+}
+
+.attachment-button {
+  .glyphicon-paperclip {
+    font-size: 18px;
+  }
+}
+
+.empty-state-wrapper {
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  padding: 10vh 20px 20px;
+
+  .empty-state {
+    border: 1px solid #e7e9eb;
+    border-radius: 10px;
+    max-width: 700px;
+    padding: 30px 40px 20px;
+    position: relative;
+
+    .empty-state-badge {
+      top: -36px;
+      left: 50%;
+      position: absolute;
+      height: 72px;
+      width: 72px;
+      -webkit-align-items: center;
+      -ms-flex-align: center;
+      align-items: center;
+      border-radius: 100%;
+      color: #ffffff;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      font-size: 40px;
+      -webkit-justify-content: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+      margin-left: -36px;
+      text-align: center;
+    }
+
+    .empty-state-header {
+      font-size: 30px;
+      text-align: center;
+      color: #343d47;
+    }
+
+    .empty-state-content {
+      ul {
+        list-style: disc outside;
+        margin: 0 0 10px 0;
+        padding: 0 0 0 30px;
+      }
+    }
+  }
+}</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description>Display the specified view for the task specified in the URL, and provide a list of SharePoint documents uploaded realted to the specified task.</description>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>contentintegration-item-form</id>
+        <internal>false</internal>
+        <link/>
+        <name>Document Integration Item Form</name>
+        <option_schema>[{"name":"disableUIActions","label":"Disable UI Actions on Form","type":"boolean"},{"name":"showFormView","label":"Display current form view","type":"boolean"},{"name":"omitHeaderOptions","label":"Omit header options icon","type":"boolean"},{"name":"empty_state_template","label":"Widget to display when empty (Widget ID)","type":"string"},{"name":"sp_doc_tab_visible","default_value":"false","label":"SharePoint Documents Tab Visible","type":"boolean"},{"name":"tasker_attachments_visible","default_value":"false","label":"Tasker Attachments Visible","type":"boolean"},{"name":"view","default_value":"null","label":"View","type":"string"}]</option_schema>
+        <public>false</public>
+        <roles>x_dtll2_contentint.contentintegration_task_user</roles>
+        <script><![CDATA[//------------------------------------------------------------------------------------------------------------------------
+// APPLICATION: CONTENT/DOC INTEGRATOR
+// COMPANY: DISCOVER TECHNOLOGIES
+// CUSTOMIZED BY: KARINA TORRES, DAVID SHILKRET, BRENDAN TOOLE, BRIAN KEENER
+// WIDGET BASE: FORM
+// PURPOSE: DISPLAY THE FORM FOR A TASK ITEM AND INJECT SHAREPOINT DOCUMENTS TAB AND TABLE
+//------------------------------------------------------------------------------------------------------------------------
+(function($sp, input, data, options, gs) {
+	try{
+		data.sys_id = $sp.getParameter("sys_id");
+
+		data.table = $sp.getParameter("table");
+	} catch(ex){
+		
+	}
+	
+// form functionality - URL parameter driven
+
+  /* "use strict"; -linter issues */
+  // populate the 'data' variable
+	data.attachmentUploadSuccessMsg = gs.getMessage("Attachment upload was successful");
+	data.recordAddedMsg = gs.getMessage("Record Added");
+	data.updatedMsg = gs.getMessage("updated_uppercase");
+	data.exportPDFMsg = gs.getMessage("Export to PDF");
+	data.exportPDFLandMsg = gs.getMessage("Export to PDF (landscape)");
+	data.addAttachmentMsg = gs.getMessage("Add an attachment");
+	data.largeAttachmentMsg = gs.getMessage("Attached files must be smaller than {0} - please try again", "24MB");
+	data.attachmentSuccessMsg = gs.getMessage("Attachment successfully uploaded");
+	data.isAdmin = gs.hasRole(gs.getProperty('x_dtll2_contentint.tasker_user'));
+	data.emptyStateTemplate = options.empty_state_template;
+	data.disableUIActions = options.disableUIActions === "true";
+	data.hideRelatedLists = options.hideRelatedLists || false;
+
+	//------------------------------------------------------------------------------------------------------------------------
+	// CUSTOM PARAMETERS
+	//------------------------------------------------------------------------------------------------------------------------
+	data.page_id = $sp.getParameter("id");
+	data.sys_id = $sp.getParameter("sys_id");
+	data.view = $sp.getParameter("view"); 
+	data.filter = $sp.getParameter("filter");
+	data.isValid = true;
+	//------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------
+	// OPTION SCHEMA
+	// options.sp_doc_tab_visible default false - controls the SharePoint Document Tab Visibility.
+	// options.tasker_attachments_visable default false - controlls the Attachment Handler visibility.
+	// options.view default null - specifies the view being used for the form.
+	//------------------------------------------------------------------------------------------------------------------------
+	data.sp_doc_tab_visible = options.sp_doc_tab_visible == "true";
+	data.tasker_attachments_visible = options.tasker_attachments_visible == "true";
+
+	if(!options.showFormView) {
+		options.showFormView = "true";
+	}
+
+	if (input) {
+		data.table = input.table;
+		data.sys_id = input.sys_id;
+		data.view = input.view;
+		var result = {};
+		if (input._fields) {
+			result = $sp.saveRecord(input.table, input.sys_id, input._fields);
+			data.sys_id = result.sys_id;
+		}
+		if (input.sys_id == '-1')
+			data.isNewRecord = true;
+
+	} else {
+		data.table = options.table || $sp.getParameter("t") || $sp.getParameter("table") || $sp.getParameter("sl_table");
+		data.sys_id = options.sys_id || $sp.getParameter("sys_id") || $sp.getParameter("sl_sys_id");
+		data.view = options.view || $sp.getParameter("v") || $sp.getParameter("view"); // no default
+	}
+
+	if (!data.sys_id) {
+		data.isValid = false;
+		return;
+	}
+
+	data.query = $sp.getParameter("query") || options.query;
+	data.f = {};
+	if (!data.table)
+		return;
+
+	// Form widget is not a supported way to view an attachment
+	if (data.table == "sys_attachment") {
+		data.tableUnsupported = true;
+		return;
+	}
+
+	if(gs.tableExists(data.table) == false)
+		return;
+
+	if (!data.sys_id)
+		return;
+
+	var rec = new GlideRecordSecure(data.table);
+	rec.get(data.sys_id);
+	data.isValid = rec.isValid() || data.sys_id == "-1"; 
+
+	if (!data.isValid)
+		return;
+
+	data.table = rec.getRecordClassName();
+	var table = new GlideTableHierarchy(data.table); 
+	data.tableHierarchy = table.getTables();
+
+	data.canWrite = rec.canWrite();
+	data.canAttach = data.canWrite && gs.hasRole(gs.getProperty('glide.attachment.role')) 
+	data.f = $sp.getForm(data.table, data.sys_id, data.query, data.view);  
+	data.number = rec.number+"";
+	data.fieldName = gs.getProperty('x_dtll2_contentint.sp_integration_field');
+	
+	//------------------------------------------------------------------------------------------------------------------------
+	// CUSTOM: TABS
+	//------------------------------------------------------------------------------------------------------------------------
+	for (var i in data.f._related_lists) {
+		var rl = data.f._related_lists[i];
+
+		if (rl.table != "sys_attachment") {
+			var params = {
+				table: rl.table, 
+				filter: rl.field+"="+data.sys_id,
+				view: 'sp',
+				title: rl.label
+				//show_breadcrumbs: true
+			};
+
+			/*i:0 sys_attachment*/
+
+			if (options.page) {
+				var page = new GlideRecordSecure('sp_page');
+				if (page.get(options.page))
+					data.page = page.getDisplayValue('id');
+			}
+			if (!data.page) {
+				data.page = "form"; 
+			}
+
+			rl.widget = $sp.getWidget('widget-data-table', params);
+		}
+		if (rl.table == gs.getProperty('x_dtll2_contentint.tasker_attach_prop_table') ){
+			rl.visible = data.tasker_attachments_visible;
+		}
+	  }
+	//Inject SharePoint Document Related List tab.
+	var docs = new GetDocuments();
+	data.sp_interface = gs.getProperty('x_dtll2_contentint.sp_interface');
+	data.docint_docs_table = gs.getProperty('x_dtll2_contentint.docint_docs_table');
+	var d_items = [];
+	if(data.sp_interface == 'graph') {
+		d_items = docs.getDocumentsFiltered(gs.getProperty('x_dtll2_contentint.sp_integration_field'), data.number);
+	} else if (data.sp_interface == 'rest'){
+		//change the below when we get the data - for now it will be empty array
+		//d_items = docs.getDocumentsRESTFiltered(gs.getProperty('x_dtll2_contentint.sp_integration_field'), data.number);
+	}
+	var option_count = data.sp_doc_tab_visible?d_items.length:null;
+	var spparams = {fieldName: data.fieldName, fieldValue: data.number, title: gs.getProperty('x_dtll2_contentint.sp_tab_name')};
+	var spdoctab = {table: data.docint_docs_table, field: null, view: null, label: gs.getProperty('x_dtll2_contentint.sp_tab_name'), count: d_items.length, visible: data.sp_doc_tab_visible, plural:gs.getProperty('x_dtll2_contentint.sp_tab_name')};
+	
+	spdoctab.widget = $sp.getWidget('docint-filtered-sharepoint-items',spparams);
+	data.f._related_lists.push(spdoctab);
+	
+	              
+})($sp, input, data, options, gs);
+]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>dshilkret</sys_created_by>
+        <sys_created_on>2018-07-16 20:30:39</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>7c8abd1edb17db0069d100b5ca961920</sys_id>
+        <sys_mod_count>123</sys_mod_count>
+        <sys_name>Document Integration Item Form</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sp_widget_7c8abd1edb17db0069d100b5ca961920</sys_update_name>
+        <sys_updated_by>bkeener</sys_updated_by>
+        <sys_updated_on>2018-09-26 22:00:41</sys_updated_on>
+        <template><![CDATA[<div ng-if="!data.isValid && !data.emptyStateTemplate" class="panel panel-default">
+  <div class="panel-body wrapper-lg text-center">
+    <span ng-if="!data.tableUnsupported">${Record not found}</span>
+    <span ng-if="data.tableUnsupported">${Form view not supported for requested table}</span>
+  </div>
+</div>
+
+<div ng-if="!data.isValid && data.emptyStateTemplate" class="panel-shift">
+  <div class="empty-state-wrapper panel panel-default" ng-include="data.emptyStateTemplate"></div>
+</div>
+
+<div ng-if="data.isValid" class="panel-shift">
+  <div class="" ng-if="!data.f._view.length && data.hideRelatedLists && data.emptyStateTemplate">
+    <div class="empty-state-wrapper panel panel-default" ng-include="data.emptyStateTemplate"></div>
+  </div>
+
+  <div class="" ng-if="!data.f._view.length && data.hideRelatedLists && !data.emptyStateTemplate">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <span class="panel-title">{{data.f.title}}</span>
+        <span ng-if="options.showFormView == 'true' && data.f.view != ''">[{{data.f.view_title}} view]</span>
+      </div>
+      <div class="panel-body wrapper-lg text-center">
+        ${No elements to display}
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default" ng-if="data.f._view.length || !data.hideRelatedLists" >
+    <div class="panel-heading" ng-if="data.f.title.length" sp-context-menu="getUIActionContextMenu(event)">
+      	<span class="dropdown m-r-xs" ng-if="(data.isAdmin || getUIActions('context').length > 0) && options.omitHeaderOptions != 'true'">
+            <button aria-label="${Form menu}" class="btn btn-form-menu dropdown-toggle glyphicon glyphicon-menu-hamburger" style="line-height: 1.4em" id="adminMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+            <ul class="dropdown-menu" aria-labelledby="adminMenu">
+              
+              <li ng-if="::data.isAdmin"><a href="/{{data.f.table}}.do?sys_id={{data.f.sys_id}}" target="_blank">${Open in platform}</a></li>
+              <li ng-if="::data.isAdmin" class="dropdown-header">${Configure}</li>
+              <li ng-if="::data.isAdmin"><a href="/slushbucket.do?sysparm_referring_url={{adminMenu.encodedPageUrl}}&sysparm_list={{data.f._sections[0].id}}&sysparm_form=section&sysparm_view={{data.f.view}}" target="_blank">${Form Layout}</a></li>
+              <li ng-if="::data.isAdmin"><a href="/slushbucket.do?sysparm_referring_url={{adminMenu.encodedPageUrl}}&sysparm_list={{data.f.table}}&sysparm_form=related_list&sysparm_view={{data.f.view}}" target="_blank">${Related Lists}</a></li>
+              <li ng-if="::data.isAdmin"><a href="?id=contentintegration_lf&table=sys_ui_policy&filter=table%3D{{data.f.table}}%5EORtableIN{{data.tableHierarchy}}%5Eactive%3Dtrue%5Eui_type%3D1%5EORui_type%3D10" ng-click="openRelatedList($event, {id:'contentintegration_lf', table: 'sys_ui_policy', filter: 'table%3D{{data.f.table}}%5EORtableIN{{data.f.table}},sys_metadata%5Eactive%3Dtrue%5Eui_type%3D1%5EORui_type%3D10'})">${UI Policies} <span class="badge pull-right" ng-if="f.policy.length">{{f.policy.length}}</span></a></li>
+              <li ng-if="::data.isAdmin"><a href="?id=contentintegration_lf&table=sys_script_client&filter=table%3D{{data.f.table}}%5EORtableIN{{data.tableHierarchy}}%5Eactive%3Dtrue%5Eui_type%3D1%5EORui_type%3D10" ng-click="openRelatedList($event, {id: 'contentintegration_lf', table: 'sys_script_client', filter: 'table%3D{{data.f.table}}%5EORtableIN{{data.f.table}},sys_metadata%5Eactive%3Dtrue%5Eui_type%3D1%5EORui_type%3D10'})">${Client Scripts} <span class="badge pull-right" ng-if="adminMenu.getClientScriptCount()">{{adminMenu.getClientScriptCount()}}</span></a></li>
+              <li ng-if="getUIActions('context').length > 0 &&  data.isAdmin" role="separator" class="divider"></li>
+              <li ng-repeat="action in getUIActions('context')"><a href="" ng-click="triggerUIAction(action)">{{action.name}}</a></li>
+              <li ng-if="::data.isAdmin || getUIActions('context').length > 0" role="separator" class="divider"></li>
+              <li><a target="_new" href="/{{data.f.table}}.do?PDF&sys_id={{data.sys_id}}&sysparm_view={{data.f.view}}">${Export to PDF}</a></li>
+              <li><a target="_new" href="/{{data.f.table}}.do?PDF&landscape=true&sys_id={{data.sys_id}}&sysparm_view={{data.f.view}}">${Export to PDF (landscape)}</a></li>
+            </ul>
+        </span>
+      <span class="panel-title" aria-label="{{data.f.title}}">{{data.f.title}}</span> <span ng-if="options.showFormView == 'true' && data.f.view != ''">[{{data.f.view_title}} view]</span>
+      <img src="https://sp-logo-hawkjpoemc.now.sh/" ng-if="data.sp_doc_tab_visible" class="pull-right attachment-button main" id="sp-logo" onMouseOver="this.style.cursor='pointer'" ng-click="c.openModal()"/><div class="pull-right attachment-button">
+      </div>
+      <div ng-if="attachmentHandler && data.canAttach && data.tasker_attachments_visible" title="{{::data.addAttachmentMsg}}" class="pull-right attachment-button">
+      <sp-attachment-button></sp-attachment-button>
+      </div> 
+    </div>
+   <div class="panel-body">
+      <!-- attachments -->
+      <sp-attachment-manager table="data.table" sys-id="data.f._attachmentGUID" omit-edit="!data.canAttach"></sp-attachment-manager>
+      <!-- form --> 
+ <!-- KTorres related lists -->
+  <!--div class="panel-body"-->
+    <div ng-if="!data.hideRelatedLists">
+        <div style="margin-bottom: 7px; padding-bottom: 7px; border-bottom: 1px solid #f5f5f5;">
+          <ul class="nav nav-tabs" role="tablist">
+              <li id="info" class="active">
+								<a ng-class='active' href="#TaskInformation" data-toggle="tab">Information</a>
+               <!-- <span id="num">0</span>-->
+              </li>
+              <li id="sp" ng-switch="rl.table" role="presentation"  ng-repeat="rl in data.f._related_lists" ng-if="rl.table != 'sys_attachment'">
+                <a ng-switch-when="x_dtll2_contentint_contentintegration_document" ng-if="rl.visible" data-target="#{{rl.table}}" aria-controls="{{rl.table}}" role="tab" data-toggle="tab">
+                    {{rl.label}}
+                    <span class="label label-as-badge label-primary" ng-if="rl.count">{{rl.count}}</span>
+                  </a>
+                 <a ng-switch-when="x_153465_discovert_tasker_attachment_properties" ng-if="rl.visible" data-target="#{{rl.table}}" aria-controls="{{rl.table}}" role="tab" data-toggle="tab">
+                    {{rl.label}}
+                    <span class="label label-as-badge label-primary" ng-if="rl.count">{{rl.count}}</span>
+                  </a>
+                  <a ng-switch-default data-target="#{{rl.table}}" aria-controls="{{rl.table}}" role="tab" data-toggle="tab" >
+                    {{rl.label}}
+                    <span class="label label-as-badge label-primary" ng-if="rl.count">{{rl.count}}</span>
+                  </a>
+              </li>
+          </ul>
+        </div>
+    </div>
+  	<div class="tab-content">
+      <div class="tab-pane fade in active" id="TaskInformation">
+        <div>
+          <sp-model form_model="data.f" mandatory="mandatory"></sp-model>
+        </div>
+      </div>
+      <div class="tab-pane" id="{{rl.table}}" ng-class='{active:$first}' ng-repeat="rl in data.f._related_lists" ng-if="rl.table != 'sys_attachment'">
+        <div style="margin-top: -1px;">
+         <div class="alert alert-danger" ng-if="data.invalid_table">
+            Table not defined '{{data.table_label}}'
+          </div>
+          <div ng-if="!data.invalid_table">
+          <sp-widget widget="rl.widget"></sp-widget>
+          </div>
+          </div>
+        </div>
+    </div>
+<!-- End KTorres related lists -->
+      <!-- UI Action Links -->
+      <div ng-if="getUIActions('link').length > 0">
+        <label style="margin: 0;">${Related Links}</label>
+        <div ng-repeat="action in getUIActions('link')">
+          <a href ng-click="triggerUIAction(action)">{{action.name}}</a>
+        </div>
+      </div>
+      <!-- related lists BKEENER - REVIEW-->
+      <div ng-if="!data.hideRelatedLists">
+        <label style="margin: 0">${Related Lists}</label>
+        <div style="margin-bottom: 7px; padding-bottom: 7px; border-bottom: 1px solid #f5f5f5;">
+          <span ng-repeat="rl in data.f._related_lists" ng-switch="rl.table" ng-if="rl.visible">
+            <a ng-switch-when="x_dtll2_contentint_contentintegration_document" ng-if="false" ></a>
+            <a ng-switch-default ng-if="rl.type != 'REL'" href="?id=contentintegration_lf&table={{rl.table}}&filter={{rl.field}}%3D{{data.f.sys_id}}&view={{data.f.view}}" ng-click="openRelatedList($event, {id: 'contentintegration_lf', table: '{{rl.table}}', filter: '{{rl.field}}%3D{{data.f.sys_id}}'})">{{rl.plural}}
+              <span class="label label-as-badge label-primary" ng-if="rl.count">{{rl.count}}</span>
+            </a>
+            <span ng-if="!$last" style="padding-left: .5em; padding-right: .5em;" aria-hidden="true"> | </span>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="panel-footer">
+      <button ng-click="triggerUIAction(action)" ng-repeat="action in getUIActions('button')" class="btn btn-default action-btn">{{action.name}}</button>
+      <span>{{status}}</span>
+      <button ng-if="getPrimaryAction()" type="submit" ng-click="triggerUIAction(getPrimaryAction())" class="btn btn-primary action-btn pull-right">${Save}
+        <span ng-if="saveButtonSuffix">(${{{saveButtonSuffix}}})</span>
+      </button>
+      <div style="clear: both;"></div>
+      <div ng-if="mandatory.length" class="alert alert-info" style="margin-top: .5em">
+        <span ng-if="mandatory.length > 0">${Required information} </span>
+        <span ng-repeat="f in mandatory" class="label label-danger" style="margin-right: .5em; display: inline-block;">{{f.label}}</span>
+      </div>
+    </div>
+  </div>
+<div>
+</div>]]></template>
+    </sp_widget>
+</record_update>

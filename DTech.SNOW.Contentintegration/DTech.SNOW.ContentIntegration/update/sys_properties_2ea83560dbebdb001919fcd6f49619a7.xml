@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices/>
+        <description>sharepoint integration url - Get upload session relative url&#13;
+-after /drives/ to change upload location&#13;
+-after /root: to change upload folder/path</description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_dtll2_contentint.sp_relative_1</name>
+        <read_roles>x_dtll2_contentint.contentintegration_task_user</read_roles>
+        <suffix>sp_relative_1</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>btoole</sys_created_by>
+        <sys_created_on>2018-07-23 20:09:17</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>2ea83560dbebdb001919fcd6f49619a7</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>x_dtll2_contentint.sp_relative_1</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sys_properties_2ea83560dbebdb001919fcd6f49619a7</sys_update_name>
+        <sys_updated_by>btoole</sys_updated_by>
+        <sys_updated_on>2018-07-27 17:05:30</sys_updated_on>
+        <type>string</type>
+        <value>/v1.0/drives/b!1Qi4rSiDPUaYUspgdFjkuXWT7ianNydJtnguS4aKKBBxkx1uTAJhTaZFlkArPRJb/root:/J40/</value>
+        <write_roles>admin</write_roles>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=2ea83560dbebdb001919fcd6f49619a7"/>
+</record_update>

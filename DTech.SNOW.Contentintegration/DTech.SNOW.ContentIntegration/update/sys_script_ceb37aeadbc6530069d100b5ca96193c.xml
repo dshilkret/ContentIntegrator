@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_script">
+    <sys_script action="INSERT_OR_UPDATE">
+        <abort_action>false</abort_action>
+        <access>package_private</access>
+        <action_delete>false</action_delete>
+        <action_insert>true</action_insert>
+        <action_query>false</action_query>
+        <action_update>false</action_update>
+        <active>true</active>
+        <add_message>false</add_message>
+        <advanced>true</advanced>
+        <change_fields>false</change_fields>
+        <client_callable>false</client_callable>
+        <collection>x_dtll2_contentint_contentintegration_document</collection>
+        <condition/>
+        <description/>
+        <execute_function>false</execute_function>
+        <filter_condition/>
+        <is_rest>false</is_rest>
+        <message/>
+        <name>ContentIntegrationt_Duplicates</name>
+        <order>100</order>
+        <priority>100</priority>
+        <rest_method/>
+        <rest_method_text/>
+        <rest_service/>
+        <rest_service_text/>
+        <rest_variables/>
+        <role_conditions/>
+        <script><![CDATA[(function executeRule(current, previous /*null when async*/) {
+function getDifference(arrayA, arrayB, result) {
+ return arrayB.filter(function(item) {
+            return arrayA.indexOf(item) === -1;    
+  }).sort();
+}
+	// Add your code here
+	var gr = new GlideRecordSecure('x_dtll2_contentint_contentintegration_document');
+	gr.addQuery('name',current.name);
+	gr.query();
+	if(gr.next()) {
+		gs.addErrorMessage("A Document already exists with the following name: " +  current.name);
+		current.setAbortAction(true);
+	}
+
+})(current, previous);]]></script>
+        <sys_class_name>sys_script</sys_class_name>
+        <sys_created_by>dshilkret</sys_created_by>
+        <sys_created_on>2018-05-16 16:01:22</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>ceb37aeadbc6530069d100b5ca96193c</sys_id>
+        <sys_mod_count>20</sys_mod_count>
+        <sys_name>ContentIntegrationt_Duplicates</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sys_script_ceb37aeadbc6530069d100b5ca96193c</sys_update_name>
+        <sys_updated_by>bkeener</sys_updated_by>
+        <sys_updated_on>2018-09-07 18:35:18</sys_updated_on>
+        <template/>
+        <when>before</when>
+    </sys_script>
+    <sys_translated_text action="delete_multiple" query="documentkey=ceb37aeadbc6530069d100b5ca96193c"/>
+</record_update>

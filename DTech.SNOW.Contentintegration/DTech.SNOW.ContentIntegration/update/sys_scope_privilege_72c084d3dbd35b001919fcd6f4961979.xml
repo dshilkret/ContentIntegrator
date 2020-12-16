@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_scope_privilege">
+    <sys_scope_privilege action="INSERT_OR_UPDATE">
+        <operation>read</operation>
+        <source_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</source_scope>
+        <status>allowed</status>
+        <sys_class_name>sys_scope_privilege</sys_class_name>
+        <sys_created_by>btoole</sys_created_by>
+        <sys_created_on>2018-07-19 14:12:47</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>72c084d3dbd35b001919fcd6f4961979</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>task</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sys_scope_privilege_72c084d3dbd35b001919fcd6f4961979</sys_update_name>
+        <sys_updated_by>btoole</sys_updated_by>
+        <sys_updated_on>2018-07-19 14:12:47</sys_updated_on>
+        <target_name>task</target_name>
+        <target_scope display_value="Global">global</target_scope>
+        <target_type>sys_db_object</target_type>
+    </sys_scope_privilege>
+</record_update>

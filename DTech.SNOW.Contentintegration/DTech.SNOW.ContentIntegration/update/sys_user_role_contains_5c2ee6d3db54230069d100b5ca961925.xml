@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_user_role_contains">
+    <sys_user_role_contains action="INSERT_OR_UPDATE">
+        <contains display_value="x_dtll2_contentint.DocIntegrator_Document_User" name="x_dtll2_contentint.DocIntegrator_Document_User">9baca592db8e130069d100b5ca9619bf</contains>
+        <role display_value="x_dtll2_contentint.DocIntegrator_Admin" name="x_dtll2_contentint.DocIntegrator_Admin">2b425e17db14230069d100b5ca9619fe</role>
+        <sys_class_name>sys_user_role_contains</sys_class_name>
+        <sys_created_by>bkeener</sys_created_by>
+        <sys_created_on>2018-09-07 19:52:56</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>5c2ee6d3db54230069d100b5ca961925</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_dtll2_contentint.contentintegration_document_user.x_dtll2_contentint.DocIntegrator_Admin</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sys_user_role_contains_5c2ee6d3db54230069d100b5ca961925</sys_update_name>
+        <sys_updated_by>bkeener</sys_updated_by>
+        <sys_updated_on>2018-09-07 19:52:56</sys_updated_on>
+    </sys_user_role_contains>
+</record_update>

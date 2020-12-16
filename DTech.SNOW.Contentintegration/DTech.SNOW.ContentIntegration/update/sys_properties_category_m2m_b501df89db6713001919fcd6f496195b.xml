@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties_category_m2m">
+    <sys_properties_category_m2m action="INSERT_OR_UPDATE">
+        <category display_value="DocInt - Tasker Integration Settings">bda471acdbabdb001919fcd6f496193b</category>
+        <order>2000</order>
+        <property display_value="x_dtll2_contentint.req_head_v4" name="x_dtll2_contentint.req_head_v4">205cf124dbebdb001919fcd6f4961926</property>
+        <sys_class_name>sys_properties_category_m2m</sys_class_name>
+        <sys_created_by>btoole</sys_created_by>
+        <sys_created_on>2018-07-25 15:51:57</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>b501df89db6713001919fcd6f496195b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_dtll2_contentint.req_head_v4.DocInt - Tasker Integration Settings</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sys_properties_category_m2m_b501df89db6713001919fcd6f496195b</sys_update_name>
+        <sys_updated_by>btoole</sys_updated_by>
+        <sys_updated_on>2018-07-25 15:51:57</sys_updated_on>
+    </sys_properties_category_m2m>
+</record_update>

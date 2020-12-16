@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_instance">
+    <sp_instance action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <class_name/>
+        <color>default</color>
+        <css/>
+        <glyph/>
+        <id/>
+        <order>1</order>
+        <roles>x_dtll2_contentint.DocIntegrator_Task_User</roles>
+        <short_description/>
+        <size>md</size>
+        <sp_column display_value="1">bdb8b9b9dbbceb0069d100b5ca96194c</sp_column>
+        <sp_widget display_value="HTML">8679ef89cb21120000f8d856634c9c4f</sp_widget>
+        <sys_class_name>sp_instance</sys_class_name>
+        <sys_created_by>ktorres</sys_created_by>
+        <sys_created_on>2018-09-27 20:40:02</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>f5b8b9b9dbbceb0069d100b5ca96194e</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>DocIntegrator Support</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sp_instance_f5b8b9b9dbbceb0069d100b5ca96194e</sys_update_name>
+        <sys_updated_by>ktorres</sys_updated_by>
+        <sys_updated_on>2018-09-28 15:46:59</sys_updated_on>
+        <title>DocIntegrator Support</title>
+        <url/>
+        <widget_parameters><![CDATA[{
+	"html": {
+		"value": "<h1 style=\"color: #069;\" tabindex=\"0\"><strong>For information on Discover Technologies products and services, contact us here.&nbsp;We&rsquo;d love to hear from you!</strong></h1>\n<p style=\"color: #069;\"><a href=\"http://www.discovertechnologies.com/\" target=\"_blank\" rel=\"noopener noreferrer nofollow\">http://www.discovertechnologies.com/</a>&nbsp;</p>\n<p style=\"color: #069;\">&nbsp;</p>\n<h2 style=\"color: #069;\">Support Inquiries</h2>\n<p>Contact us:</p>\n<p><a href=\"http://www.discovertechnologies.com/contact/\" target=\"_blank\" rel=\"noopener noreferrer nofollow\">http://www.discovertechnologies.com/contact/</a></p>\n<p><a href=\"mailto:support@discovertechnologies.com\" target=\"_blank\" rel=\"noopener noreferrer nofollow\">support@discovertechnologies.com</a></p>\n<h2 style=\"color: #069;\">Sales Inquiries</h2>\n<p><a href=\"mailto:sales@discovertechnologies.com\">sales@discovertechnologies.com</a></p>\n<h2 style=\"color: #069;\">General Inquiries</h2>\n<p><a href=\"mailto:info@discovertechnologies.com\">info@discovertechnologies.com</a></p>\n<p style=\"color: #069;\">Phone: (800) 368-2344<br />Office: 13241 Woodland Park Road Suite 610 Herndon, VA 20171</p>\n<p>&nbsp;</p>",
+		"displayValue": "<h1 style=\"color: #069;\" tabindex=\"0\"><strong>For information on Discover Technologies products and services, contact us here.&nbsp;We&rsquo;d love to hear from you!</strong></h1>\n<p style=\"color: #069;\"><a href=\"http://www.discovertechnologies.com/\" target=\"_blank\" rel=\"noopener noreferrer nofollow\">http://www.discovertechnologies.com/</a>&nbsp;</p>\n<p style=\"color: #069;\">&nbsp;</p>\n<h2 style=\"color: #069;\">Support Inquiries</h2>\n<p>Contact us:</p>\n<p><a href=\"http://www.discovertechnologies.com/contact/\" target=\"_blank\" rel=\"noopener noreferrer nofollow\">http://www.discovertechnologies.com/contact/</a></p>\n<p><a href=\"mailto:support@discovertechnologies.com\" target=\"_blank\" rel=\"noopener noreferrer nofollow\">support@discovertechnologies.com</a></p>\n<h2 style=\"color: #069;\">Sales Inquiries</h2>\n<p><a href=\"mailto:sales@discovertechnologies.com\">sales@discovertechnologies.com</a></p>\n<h2 style=\"color: #069;\">General Inquiries</h2>\n<p><a href=\"mailto:info@discovertechnologies.com\">info@discovertechnologies.com</a></p>\n<p style=\"color: #069;\">Phone: (800) 368-2344<br />Office: 13241 Woodland Park Road Suite 610 Herndon, VA 20171</p>\n<p>&nbsp;</p>"
+	}
+}]]></widget_parameters>
+    </sp_instance>
+</record_update>

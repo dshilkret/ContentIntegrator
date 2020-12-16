@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function($rootScope, $scope, $timeout, docint_sp_upload) {
+  /* widget controller */
+  var c = this;
+	var shared = {};
+	
+	//if($scope.data.token == null){
+		//implement something like the below when 
+		//we get the sample code
+		//getADALAccessToken();
+		//$scope.data.status = "SharePoint REST upload interface is not yet implemented";
+	//}
+	
+	/*method to get file information and pass to docint_sp_upload*/
+	this.uploadSP = function(){
+		var input_file = document.getElementById("my-file");
+		if(input_file && 'files' in input_file){
+			if(input_file.files.length == 1){
+				$scope.data.filename = input_file.files[0].name;
+				$scope.data.name_only = $scope.data.filename.split('.').slice(0,-1).join('.');
+				$scope.data.ext = $scope.data.filename.split('.').pop();
+				$scope.data.status = "uploading";
+				$scope.data.percent = 0;
+				
+				var url = $scope.data.properties['x_dtll2_contentint.sp_base_1']+$scope.data.properties['x_dtll2_contentint.sp_relative_1']+$scope.data.name_only+'.'+$scope.data.ext+$scope.data.properties['x_dtll2_contentint.sp_suffix_1'];
+				//the above builds up a string that would look something like http://base_url + /relative/path/to + filename + . + extenstion + :/suffix
+				var headers = $scope.data.headers;
+				var properties = $scope.data.properties;
+				
+				var body = $scope.data.sp_file_conflict;
+				var progresscallback = function(pct){					
+				  $scope.data.percent = Math.floor(pct);
+					if(pct < 100){
+						$scope.data.status = "uploading";
+					} else {
+						delete $scope.data.percent;
+						$scope.data.status = "complete";
+					}
+				};
+				var successcallback = function(response){
+					progresscallback(100);
+					shared.spitemid = response.spitemid;
+					$timeout(function(){
+						angular.element('[ng-click*="buttonClicked"]').triggerHandler('click'); 						
+						$rootScope.$broadcast('docint.select_document', {name: 'spitemid', value: shared.spitemid});
+						$rootScope.$broadcast('docint.reload_documents');
+					});
+				};
+				var failcallback = function(response){
+					if(response && response.error && response.error.message){
+						delete $scope.data.percent;
+						$scope.data.status = "error: "+ response.error.message;
+					}
+				};
+				
+				/* 
+				if O365 - use the StartUpload with those params
+				  -url : refers to the graph.microsoft.com api
+				
+				on prem would make its own StartUpload and we pass in what that needs
+					the callbacks and other items would be the same
+				*/
+				if($scope.data.sp_interface =='graph') {
+				docint_sp_upload.StartUpload(url, $scope.data.token, headers, properties, body, $scope.data.filename, $scope.data.name_only,
+																		$scope.data.ext, input_file.files[0], $scope.data.sys_id, $scope.data.fieldname,
+																		 $scope.data.fieldvalue,
+																		progresscallback, successcallback, failcallback);
+				} else if($scope.data.sp_interface == 'rest'){
+					//docint_sp_upload.StartUploadREST(url, $scope.data.token, headers, properties, body, $scope.data.filename, $scope.data.name_only,
+					//													$scope.data.ext, input_file.files[0], $scope.data.sys_id, $scope.data.fieldname,
+					//													 $scope.data.fieldvalue,
+					//													progresscallback, successcallback, failcallback);
+					//BKEENER Upload with ADAL
+					//var _dtadlal = new DTTaskerADAL('787464b7-b766-4b37-b10c-18b665d1ceb6', 'sdev2.onmicrosoft.com', 'https://sdev2.sharepoint.com');
+					//var dtsp = new DTTaskerSharePoint('https://sdev2.sharepoint.com', 'Discover Tasker Documents');
+					var _dtadlal = new DTTaskerADAL($scope.data.sp_client_id, $scope.data.sp_tenant_name, $scope.data.sp_base_2);
+					var dtsp = new DTTaskerSharePoint($scope.data.sp_base_2, $scope.data.sp_doc_library);
+					_dtadlal.getToken(function (token) {
+						var reader = new FileReader();
+						var buffer = null;
+						reader.onload = function(){
+							var arrayBuffer = this.result;
+							//var meta = JSON.stringify({"__metadata": { type: "SP.Data.Discover_x0020_Tasker_x0020_DocumentsItem" }, TaskId: $scope.data.fieldvalue});
+							var meta = "{\"__metadata\": { \"type\": \""+$scope.data.sp_content_type+"\" }, \""+$scope.data.fieldname+"\": \""+$scope.data.fieldvalue+"\"}";
+							//var meta = JSON.stringify({"__metadata": { type: $scope.data.sp_content_type }, $scope.data.fieldname: $scope.data.fieldvalue});
+							buffer = new Uint8Array(arrayBuffer);
+							var itemId = dtsp.postSPFile(token, $scope.data.filename, arrayBuffer, meta);
+							successcallback({spitemid: -1});
+						}
+						//Check for existing file, alert "Please select a file."
+						reader.readAsArrayBuffer(input_file.files[0]);
+						
+					}, _dtadlal.authContext);
+					//alert('SharePoint REST upload interface is not yet implemented');
+				}
+			
+			}
+		}
+	};
+	
+	this.closeModal = function(){
+		$rootScope.$broadcast("upload.close-modal", {close: true});
+	};
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>docint-sp-upload</id>
+        <internal>false</internal>
+        <link/>
+        <name>Document Integrator SharePoint Upload</name>
+        <option_schema>[{"name":"sharepoint_url","default_value":"https://sdev2.sharepoint.com/Discover%20Tasker%20Documents/J30","label":"SharePoint URL","type":"string"},{"name":"oauth_flow_name","default_value":"sdev2","label":"OAuth Flow Name","type":"string"},{"name":"fieldname","default_value":"","label":"Field Name to link to SharePoint","type":"string"},{"name":"fieldvalue","default_value":"TASK0022470","label":"Field Value to link to SharePoint","type":"string"}]</option_schema>
+        <public>false</public>
+        <roles>x_dtll2_contentint.contentintegration_task_user</roles>
+        <script><![CDATA[(function() {
+	data.title = options.title || data.title || gs.getProperty('x_dtll2_contentint.sp_upload_label');
+  data.oauth_flow_name = options.oauth_flow_name || gs.getProperty('x_dtll2_contentint.oauth_name');
+	data.filename = input ? input.filename : "";
+	data.name_only = input ? input.name_only : "";
+	data.ext = input ? input.ext : "";
+	data.fieldname = (input ? input.fieldname : options.fieldname) || gs.getProperty('x_dtll2_contentint.sp_integration_field');
+	data.fieldvalue = (input ? input.fieldvalue : options.fieldvalue) ;
+	data.sp_interface = gs.getProperty('x_dtll2_contentint.sp_interface');
+	if(data.sp_interface == 'graph'){
+		data.token = new GetAccessTkn().getAccessTokenByOAuthName(data.oauth_flow_name).token;
+	} else if(data.sp_interface == 'rest'){
+		//Handled Client Side
+		data.token = null;
+	}
+	
+	//System Properties
+	data.sp_client_id = gs.getProperty('x_dtll2_contentint.sp_client_id');
+	data.sp_tenant_name = gs.getProperty('x_dtll2_contentint.sp_tenant_name');
+	data.sp_base_2 = gs.getProperty('x_dtll2_contentint.sp_base_2');
+	data.sp_tab_name = gs.getProperty('x_dtll2_contentint.sp_tab_name');
+	data.sp_doc_library = gs.getProperty('x_dtll2_contentint.sp_doc_library');
+	data.sp_content_type = gs.getProperty('x_dtll2_contentint.sp_content_type');
+	data.fieldname = gs.getProperty('x_dtll2_contentint.sp_integration_field');
+	
+	//set up properties to pass for client side
+	data.properties = {};
+	data.properties['x_dtll2_contentint.sp_base_1'] = gs.getProperty('x_dtll2_contentint.sp_base_1');
+	data.properties['x_dtll2_contentint.sp_relative_1'] = gs.getProperty('x_dtll2_contentint.sp_relative_1');
+	data.properties['x_dtll2_contentint.sp_suffix_1'] = gs.getProperty('x_dtll2_contentint.sp_suffix_1');
+	data.properties['x_dtll2_contentint.sp_relative_2'] = gs.getProperty('x_dtll2_contentint.sp_relative_2');
+	data.properties['x_dtll2_contentint.sp_suffix_2'] = gs.getProperty('x_dtll2_contentint.sp_suffix_2');
+	data.properties['x_dtll2_contentint.sp_relative_3'] = gs.getProperty('x_dtll2_contentint.sp_relative_3');
+	data.properties['x_dtll2_contentint.sp_suffix_3'] = gs.getProperty('x_dtll2_contentint.sp_suffix_3');
+	
+	data.properties['x_dtll2_contentint.req_head_n1'] = gs.getProperty('x_dtll2_contentint.req_head_n1');
+	data.properties['x_dtll2_contentint.req_head_v1'] = gs.getProperty('x_dtll2_contentint.req_head_v1');
+	data.properties['x_dtll2_contentint.req_head_n2'] = gs.getProperty('x_dtll2_contentint.req_head_n2');
+	data.properties['x_dtll2_contentint.req_head_v2'] = gs.getProperty('x_dtll2_contentint.req_head_v2');
+	data.properties['x_dtll2_contentint.req_head_n3'] = gs.getProperty('x_dtll2_contentint.req_head_n3');
+	data.properties['x_dtll2_contentint.req_head_v3'] = gs.getProperty('x_dtll2_contentint.req_head_v3');
+	data.properties['x_dtll2_contentint.req_head_n4'] = gs.getProperty('x_dtll2_contentint.req_head_n4');
+	data.properties['x_dtll2_contentint.req_head_v4'] = gs.getProperty('x_dtll2_contentint.req_head_v4') + data.token;
+	data.properties['x_dtll2_contentint.req_head_n5'] = gs.getProperty('x_dtll2_contentint.req_head_n5');
+	data.properties['x_dtll2_contentint.req_head_v5'] = gs.getProperty('x_dtll2_contentint.req_head_v5');
+	
+	data.headers = {};
+	data.headers[data.properties['x_dtll2_contentint.req_head_n1']] = data.properties['x_dtll2_contentint.req_head_v1'];
+	data.headers[data.properties['x_dtll2_contentint.req_head_n2']] = data.properties['x_dtll2_contentint.req_head_v2'];
+	data.headers[data.properties['x_dtll2_contentint.req_head_n3']] = data.properties['x_dtll2_contentint.req_head_v3'];
+	data.headers[data.properties['x_dtll2_contentint.req_head_n4']] = data.properties['x_dtll2_contentint.req_head_v4'];
+	data.headers[data.properties['x_dtll2_contentint.req_head_n5']] = data.properties['x_dtll2_contentint.req_head_v5'];
+	
+	data.sp_file_conflict = JSON.parse(gs.getProperty('x_dtll2_contentint.sp_file_conflict'));	
+	
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>btoole</sys_created_by>
+        <sys_created_on>2018-07-19 15:57:41</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>6bc85c5fdbd35b001919fcd6f496194c</sys_id>
+        <sys_mod_count>131</sys_mod_count>
+        <sys_name>Document Integrator SharePoint Upload</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sp_widget_6bc85c5fdbd35b001919fcd6f496194c</sys_update_name>
+        <sys_updated_by>bkeener</sys_updated_by>
+        <sys_updated_on>2018-09-26 22:01:14</sys_updated_on>
+        <template><![CDATA[<div class="panel-body wrapper-xl">
+  <div>
+    <input type="file" id="my-file">
+    <div>
+    </div>
+    <input type="button" ng-click="c.uploadSP()" value="Upload">      
+  </div>
+  <!--<span ng-bind="data.fieldvalue"></span>-->
+  <span ng-bind="data.percent"></span><span ng-if="data.percent">%</span>
+  <span ng-bind="data.status"></span>
+</div>
+]]></template>
+    </sp_widget>
+</record_update>

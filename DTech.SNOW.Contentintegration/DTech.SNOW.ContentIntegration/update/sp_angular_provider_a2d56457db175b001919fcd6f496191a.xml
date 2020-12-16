@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_angular_provider">
+    <sp_angular_provider action="INSERT_OR_UPDATE">
+        <name>docint_sp_upload</name>
+        <script><![CDATA[function docint_sp_upload(){
+	var self = this;
+	self.name = "docint_sp_upload";
+	self.minProgressInterval = 50;
+	self.progressTimer = null;
+	self.StartUpload = function(url, token, headers, properties, body, 
+															 filename, name, ext, file, spid, fieldname, fieldvalue,
+															 progressCallback, successCallback, errorCallback){
+		
+		self.token = token;
+		self.fieldname = fieldname;
+		self.fieldvalue = fieldvalue;
+		self.successCallback = successCallback;
+		self.errorCallback = errorCallback;
+		self.properties = properties;
+		self.progressTimer = performance.now();
+		$.ajax({type: "POST",
+            url: url,
+						headers: headers,
+            body: body}).done(function (response) {
+								var uploadUrl = response.uploadUrl;
+								//console.log(JSON.stringify(response));
+								self.uploadChunks(file, uploadUrl, progressCallback);
+			
+							}).fail(function (response) {
+								self.errorCallback("Could not get upload session: " + response.responseText);
+							});
+				
+	};
+	
+	self.uploadChunks = async function (file, uploadUrl, progressCallback) {
+            var reader = new FileReader(); 
+            //console.log('uploadChunks');
+            // Variables for byte stream position
+            var position = 0; 
+            var chunkLength = 320 * 1024; //recommended chunk size is 320 KiB
+            //console.log("File size is: " + file.size); 
+            var continueRead = true; 
+            while (continueRead) {
+                var chunk; 
+                try {
+                    continueRead = true; 
+                    //Try to read in the chunk
+                    try {
+                        var stopByte = position + chunkLength; 
+                        //console.log("Sending Asynchronous request to read in chunk bytes from position " + position + " to end " + stopByte); 
+
+                        chunk = await self.readFragmentAsync(file, position, stopByte); 
+                        //console.log("UploadChunks: Chunk read in of " + chunk.byteLength + " bytes."); 
+											 
+											  var pct =  (position * 100) / file.size;
+											  //console.log("percent: "+pct);
+												progressCallback(pct);	
+																							
+											  
+                        if (chunk.byteLength > 0) {
+                            continueRead = true; 
+                        }else {
+                            break; 
+                        }
+                        //console.log("Chunk bytes received = " + chunk.byteLength); 
+                    }catch (e) {
+                        console.log("Bytes Received from readFragmentAsync:: " + e); 
+                        break; 
+                    }
+                    // Try to upload the chunk.
+                    try {
+                        //console.log("Request sent for uploadFragmentAsync"); 
+                        var res = await self.uploadChunk(chunk, uploadUrl, position, file.size); 
+                        // Check the response.
+                        if (res.status !== 202 && res.status !== 201 && res.status !== 200)
+                            throw ("Put operation did not return expected response"); 
+                        if (res.status === 201 || res.status === 200)
+                        {
+                            //console.log("Reached last chunk of file.  Status code is: " + res.status);
+                            continueRead = false; 
+                        }  
+                        else
+                        {
+                            //console.log("Continuing - Status Code is: " + res.status);
+                            position = Number(res.json.nextExpectedRanges[0].split('-')[0]);
+                        }    
+
+                        //console.log("Successful response received from uploadChunk."); 
+                        //console.log("Position is now " + position); 
+                      
+                       
+                     
+                    }catch (e1) {
+                        console.log("Error occured when calling uploadChunk::" + e); 
+                    }
+
+                }catch (e2) {
+                    continueRead = false; 
+                }
+            }
+  
+        }
+	
+	self.readFragmentAsync = function (file, startByte, stopByte) {
+            var frag = ""; 
+            var reader = new FileReader(); 
+            //console.log("startByte :" + startByte + " stopByte :" + stopByte); 
+            var blob = file.slice(startByte, stopByte); 
+            reader.readAsArrayBuffer(blob); 
+            return new Promise( function(resolve, reject)  {
+                reader.onloadend = function(event) {
+                    //console.log("onloadend called  " + reader.result.byteLength); 
+                    if (reader.readyState === reader.DONE) {
+                        frag = reader.result; 
+                        resolve(frag); 
+                    }
+                }; 
+            }); 
+        }; 
+		
+	self.uploadChunk = function(chunk, uploadURL, position, totalLength) {
+            var max = position + chunk.byteLength - 1; 
+            //var contentLength = position + chunk.byteLength;
+
+            //console.log("Chunk size is: " + chunk.byteLength + " bytes."); 
+
+            return new Promise(function(resolve, reject)  {
+                //console.log("uploadURL:: " + uploadURL); 
+
+                try {
+                    //console.log('Just before making the PUT call to uploadUrl.');
+                    var crHeader = "bytes " + position + "-" + max + "/" + totalLength;
+                     //Execute PUT request to upload the content range.
+                    $.ajax({
+                        type: "PUT",
+                        contentType: "application/octet-stream",                    
+                        url: uploadURL,
+                        data: chunk,
+                        processData: false,
+                        headers: {"Content-Range": crHeader }                    
+
+                    }).done(function (data, textStatus, jqXHR) {
+                        //console.log("Content-Range header being set is : " + crHeader);
+                        if (jqXHR.responseJSON.nextExpectedRanges) {
+                            //console.log("Next Expected Range is: " + jqXHR.responseJSON.nextExpectedRanges[0]);
+                        }
+                        else {
+                            //console.log("We've reached the end of the chunks.")
+                        }                        
+                        
+                        var results = {};
+                        results.status = jqXHR.status;
+                        results.json = jqXHR.responseJSON;
+                        //console.log("PUT RESULTS: " + JSON.stringify(results.json));
+                        var docId = results.json.id;
+                        resolve(results);
+                        //console.log("docId: " + JSON.stringify(docId));
+												if(!jqXHR.responseJSON.nextExpectedRanges){
+													self.getSPId(docId);
+												}
+                        
+         
+                        //this.updateData(spid, 'taskid', );
+                        //console.log("Current spid?: " + c.data.spid);
+                       //
+                    }).fail(function (response) {
+                        console.log("Could not upload chunk: " + response.responseText);    
+                        console.log("Content-Range header being set is : " + crHeader);  
+
+                    });
+                }catch (e) {
+                    console.log("exception inside uploadChunk::  " + e); 
+                    reject(e); 
+                }
+            }); 
+        };
+		
+	self.updateData = function(id, fieldname, fieldvalue) {
+  
+            //console.log("updateData Started");
+
+                var itemId = id;
+                console.log("itemId: " + itemId);
+                self.spitemid = id;
+                var tnVal = '{\"'+fieldname +'\":' + '\"' + fieldvalue + '\" }';
+                console.log(tnVal);
+                if (itemId == '' || itemId == null)
+                {
+                    console.log("itemId is empty")
+                }
+                else
+                {
+                //Execute PATCH request to Files API.
+									var header = {};
+									header[self.properties['x_dtll2_contentint.req_head_n3']] = self.properties['x_dtll2_contentint.req_head_v3'];
+									header[self.properties['x_dtll2_contentint.req_head_n4']] = self.properties['x_dtll2_contentint.req_head_v4'];
+                $.ajax({
+                    type: "PATCH",
+                    url: self.properties['x_dtll2_contentint.sp_base_1']+ self.properties['x_dtll2_contentint.sp_relative_2'] + itemId + self.properties['x_dtll2_contentint.sp_suffix_2'],
+                    headers: header,
+                    data: tnVal
+                }).done(function (response) {
+                    console.log("Successfully updated file metadata.");
+                    //console.log(response);
+									  response.spitemid = self.spitemid;
+                    self.successCallback(response);
+
+
+                }).fail(function () {
+                    console.log("Fetching files from SharePoint failed.");
+                    self.errorCallback("Fetching files from SharePoint failed.");
+                });
+               }
+            
+
+        };
+	self.getSPId = function(id) {
+
+            //console.log("Fetching files using Graph API");
+            
+                var docId = id;
+               
+                //Execute GET request to Files API.
+				        var header = {};
+								header[self.properties['x_dtll2_contentint.req_head_n4']] = self.properties['x_dtll2_contentint.req_head_v4'];
+                $.ajax({
+                    type: "GET",
+                    url:  self.properties['x_dtll2_contentint.sp_base_1']+ self.properties['x_dtll2_contentint.sp_relative_3'] + docId + self.properties['x_dtll2_contentint.sp_suffix_3'],
+                    headers: header
+
+                }).done(function (response) {
+                    //console.log("Successfully fetched List Item Id from SharePoint.");
+                    //console.log("getSPId: " + JSON.stringify(response));
+                    var taskId = response.sharepointIds.listItemId;
+                    //console.log("taskId: " + JSON.stringify(taskId));
+                    self.updateData(taskId, self.fieldname, self.fieldvalue); //should be an option now
+                
+                    //console.log("Successfully updated SharePoint metadata.");
+                  
+                    
+									
+                }).fail(function () {
+                    console.log("Fetching SPId from SharePoint failed.");
+                    self.errorCallback("Fetching SPId from SharePoint failed.");
+                });
+        
+        };
+
+  self.StartUploadREST = function(url, token, headers, properties, body, 
+															 filename, name, ext, file, spid, fieldname, fieldvalue,
+															 progressCallback, successCallback, errorCallback){
+		alert("REST Upload not implemented yet");
+		
+	};
+		
+		
+}]]></script>
+        <sys_class_name>sp_angular_provider</sys_class_name>
+        <sys_created_by>btoole</sys_created_by>
+        <sys_created_on>2018-07-19 16:55:31</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>a2d56457db175b001919fcd6f496191a</sys_id>
+        <sys_mod_count>31</sys_mod_count>
+        <sys_name>docint_sp_upload</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sp_angular_provider_a2d56457db175b001919fcd6f496191a</sys_update_name>
+        <sys_updated_by>btoole</sys_updated_by>
+        <sys_updated_on>2018-07-27 21:25:37</sys_updated_on>
+        <type>service</type>
+    </sp_angular_provider>
+</record_update>

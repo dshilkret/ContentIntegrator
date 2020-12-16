@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_cors_rule">
+    <sys_cors_rule action="INSERT_OR_UPDATE">
+        <delete>false</delete>
+        <domain>https://jsfiddle.net</domain>
+        <exposed_headers/>
+        <get>true</get>
+        <max_age>0</max_age>
+        <name>jsfiddle.net</name>
+        <patch>false</patch>
+        <post>true</post>
+        <put>false</put>
+        <rest_api>now/table</rest_api>
+        <sys_class_name>sys_cors_rule</sys_class_name>
+        <sys_created_by>dshilkret</sys_created_by>
+        <sys_created_on>2018-06-04 19:00:00</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>97d25d30db261b402372e1d3ca9619c5</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>jsfiddle.net</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sys_cors_rule_97d25d30db261b402372e1d3ca9619c5</sys_update_name>
+        <sys_updated_by>dshilkret</sys_updated_by>
+        <sys_updated_on>2018-06-04 19:00:00</sys_updated_on>
+    </sys_cors_rule>
+</record_update>

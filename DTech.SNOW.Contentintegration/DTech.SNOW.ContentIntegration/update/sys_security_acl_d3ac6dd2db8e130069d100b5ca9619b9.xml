@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl">
+    <sys_security_acl action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <admin_overrides>true</admin_overrides>
+        <advanced>false</advanced>
+        <condition/>
+        <description>Default access control on x_dtll2_contentint_contentintegration_document</description>
+        <name>x_dtll2_contentint_contentintegration_document</name>
+        <operation display_value="write">write</operation>
+        <script/>
+        <sys_class_name>sys_security_acl</sys_class_name>
+        <sys_created_by>dshilkret</sys_created_by>
+        <sys_created_on>2018-05-15 16:11:43</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>d3ac6dd2db8e130069d100b5ca9619b9</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_dtll2_contentint_contentintegration_document</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sys_security_acl_d3ac6dd2db8e130069d100b5ca9619b9</sys_update_name>
+        <sys_updated_by>dshilkret</sys_updated_by>
+        <sys_updated_on>2018-05-15 16:11:43</sys_updated_on>
+        <type display_value="record">record</type>
+    </sys_security_acl>
+</record_update>

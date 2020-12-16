@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_documentation element="" label="Tasks" language="en" table="x_dtll2_contentint_contentintegration_task">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element/>
+            <help/>
+            <hint/>
+            <label>Tasks</label>
+            <language>en</language>
+            <name>x_dtll2_contentint_contentintegration_task</name>
+            <plural>Tasks</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>dshilkret</sys_created_by>
+            <sys_created_on>2018-05-15 16:10:56</sys_created_on>
+            <sys_customer_update>false</sys_customer_update>
+            <sys_id>b77ca9d2db8e130069d100b5ca9619b3</sys_id>
+            <sys_mod_count>2</sys_mod_count>
+            <sys_name>Tasks</sys_name>
+            <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+            <sys_policy/>
+            <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+            <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+            <sys_update_name>sys_documentation_x_dtll2_contentint_contentintegration_task__en</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2018-05-29 22:19:46</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

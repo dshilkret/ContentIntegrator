@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_dtll2_contentint.DI_Common</api_name>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>DI_Common</name>
+        <script><![CDATA[var DI_Common = Class.create();
+DI_Common.prototype = {
+    initialize: function() {
+    },
+    optionCopy: function(namesArray, input, options, data, defaults) {
+		namesArray.forEach(function(name) {
+			if(input && input.hasOwnProperty(name)) {
+              data[name] = input[name];
+			} else if(options && options.hasOwnProperty(name)) {
+			  data[name] = options[name];
+			} else {
+				data[name] = null;
+			}
+			if(data[name] == null && defaults[name] != null)
+				data[name] = defaults[name];
+		});
+		return data;
+	},
+    type: 'DI_Common'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>btoole</sys_created_by>
+        <sys_created_on>2018-07-17 21:58:34</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>8728172edbd31b001919fcd6f4961991</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>DI_Common</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sys_script_include_8728172edbd31b001919fcd6f4961991</sys_update_name>
+        <sys_updated_by>btoole</sys_updated_by>
+        <sys_updated_on>2018-07-17 21:59:11</sys_updated_on>
+    </sys_script_include>
+</record_update>

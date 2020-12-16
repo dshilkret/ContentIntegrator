@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function ($scope, $rootScope, $timeout, spUtil, $location, $window, nowAttachmentHandler, $log, spAriaUtil, $sce) {
+	var c = this;
+	
+	$scope.$on("docint.load_sp_preview", function(e, parms){
+		if (parms && parms.url){
+			$scope.data.metadatafields = [];
+			
+			for (var item in parms){
+				var field = {name:item, value:parms[item], read_only:true, mandatory:false, hidden:false};
+			  if (field.name == 'LinkFilename'){
+					$scope.data.docName = field.value;
+				}
+				$scope.data.metadatafields.push(field);
+			}
+			$scope.data.anything = JSON.stringify($scope.data.metadatafields);
+			$scope.data.doc_url = parms.url;
+			var index = $scope.data.doc_url.indexOf('&action');
+			$scope.data.doc_url = $scope.data.doc_url.substring(0,index);
+			$scope.data.isValid = true;
+		}
+		});
+	//FILTER METADATA FIELDS SPECIFIED IN OPTIONS
+	c.filterMetadataFields = function (field){
+		var fieldArray = $scope.data.columns_to_show.split(',');
+		for (var item in fieldArray){
+			if (fieldArray[item] == field.name)
+				return true;
+		}
+		return false;
+	}
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.main{
+margin-left:5px;
+}
+
+.none{
+  display: none;
+}
+.btn-form-menu {
+	vertical-align: inherit;
+  padding: inherit;
+  background: none;
+}
+
+.panel-title {
+  word-wrap: break-word;
+}
+
+.comment {
+	font-weight: bold;
+	margin-top: 2px;
+	margin-bottom: 2px;
+}
+.mce-panel, .mce-btn {
+	background-image: none;
+	background-color: #f0f3f4;
+}
+
+.action-btn {
+  margin-right: 5px;
+}
+
+.timeline-container {
+   max-height: 50vh;
+   height: 100%;
+   overflow-y: auto;
+}
+
+.panel .panel {
+    height: auto !important;
+}
+
+.attachment-button {
+  .glyphicon-paperclip {
+    font-size: 18px;
+  }
+}
+
+.empty-state-wrapper {
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  padding: 10vh 20px 20px;
+
+  .empty-state {
+    border: 1px solid #e7e9eb;
+    border-radius: 10px;
+    max-width: 700px;
+    padding: 30px 40px 20px;
+    position: relative;
+
+    .empty-state-badge {
+      top: -36px;
+      left: 50%;
+      position: absolute;
+      height: 72px;
+      width: 72px;
+      -webkit-align-items: center;
+      -ms-flex-align: center;
+      align-items: center;
+      border-radius: 100%;
+      color: #ffffff;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      font-size: 40px;
+      -webkit-justify-content: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+      margin-left: -36px;
+      text-align: center;
+    }
+
+    .empty-state-header {
+      font-size: 30px;
+      text-align: center;
+      color: #343d47;
+    }
+
+    .empty-state-content {
+      ul {
+        list-style: disc outside;
+        margin: 0 0 10px 0;
+        padding: 0 0 0 30px;
+      }
+    }
+  }
+}
+.panel-body {
+  height: auto;
+}</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description>Copy of ContentIntegration_3_Col_Right for MVP Sprint. Intended to display preview of SharePoint document.</description>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>contentintegration-document-preview</id>
+        <internal>false</internal>
+        <link/>
+        <name>Document Integration Document Preview</name>
+        <option_schema>[{"name":"disableUIActions","label":"Disable UI Actions on Form","type":"boolean"},{"name":"showFormView","label":"Display current form view","type":"boolean"},{"name":"omitHeaderOptions","label":"Omit header options icon","type":"boolean"},{"name":"columns_to_show","default_value":"name,taskid,url","label":"Columns to Show (comma separated)","type":"string"}]</option_schema>
+        <public>false</public>
+        <roles>x_dtll2_contentint.contentintegration_task_user</roles>
+        <script><![CDATA[//------------------------------------------------------------------------------------------------------------------------
+// APPLICATION: DOC INTEGRATOR
+// COMPANY: DISCOVER TECHNOLOGIES
+// CUSTOMIZED BY: KARINA TORRES, DAVID SHILKRET, BRENDAN TOOLE, BRIAN KEENER
+// WIDGET BASE: FORM
+//------------------------------------------------------------------------------------------------------------------------
+// form functionality - URL parameter driven
+(function($sp, input, data, options, gs) {
+  /* "use strict"; -linter issues */
+  // populate the 'data' variable
+	data.attachmentUploadSuccessMsg = gs.getMessage("Attachment upload was successful");
+	data.recordAddedMsg = gs.getMessage("Record Added");
+	data.updatedMsg = gs.getMessage("updated_uppercase");
+	data.exportPDFMsg = gs.getMessage("Export to PDF");
+	data.exportPDFLandMsg = gs.getMessage("Export to PDF (landscape)");
+	data.addAttachmentMsg = gs.getMessage("Add an attachment");
+	data.largeAttachmentMsg = gs.getMessage("Attached files must be smaller than {0} - please try again", "24MB");
+	data.attachmentSuccessMsg = gs.getMessage("Attachment successfully uploaded");
+	data.isAdmin = gs.hasRole(gs.getProperty('x_dtll2_contentint.tasker_user')); //data.isAdmin = gs.hasRightsTo('sp/configure.all/execute', null); //for GLOBAL app
+	data.emptyStateTemplate = options.empty_state_template;
+	data.disableUIActions = options.disableUIActions === "true";
+	data.hideRelatedLists = options.hideRelatedLists || false;
+
+	//------------------------------------------------------------------------------------------------------------------------
+	// CUSTOM ATTRIBUTES
+	//------------------------------------------------------------------------------------------------------------------------
+	data.page_id = $sp.getParameter("id");
+	data.sys_id = $sp.getParameter("sys_id");
+	data.view = $sp.getParameter("view"); 
+	data.filter = $sp.getParameter("filter");
+	data.isValid = false; //always false
+	data.doc_url = null;
+	//------------------------------------------------------------------------------------------------------------------------
+
+	if(!options.showFormView) {
+		options.showFormView = "true";
+	}
+	//SPECIFY METADATA TO SHOW FOR SHAREPOINT DOCUMENT
+	data.columns_to_show = options.columns_to_show || data.columns_to_show || "name,taskid,url";
+
+	if (input) {
+		data.table = input.table;
+		data.sys_id = input.sys_id;
+		data.view = input.view;
+		var result = {};
+		if (input._fields) {
+			result = $sp.saveRecord(input.table, input.sys_id, input._fields);
+			data.sys_id = result.sys_id;
+		}
+		if (input.sys_id == '-1')
+			data.isNewRecord = true;
+
+	} else {
+		data.table = options.table || $sp.getParameter("t") || $sp.getParameter("table") || $sp.getParameter("sl_table");
+		data.sys_id = options.sys_id || $sp.getParameter("sys_id") || $sp.getParameter("sl_sys_id");
+		data.view = options.view || $sp.getParameter("v") || $sp.getParameter("view"); // no default
+	}
+
+	if (!data.sys_id) {
+		data.isValid = false;
+		return;
+	}            
+})($sp, input, data, options, gs);
+]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>dshilkret</sys_created_by>
+        <sys_created_on>2018-07-16 15:34:22</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>f8b67096db93db0069d100b5ca96191a</sys_id>
+        <sys_mod_count>161</sys_mod_count>
+        <sys_name>Document Integration Document Preview</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sp_widget_f8b67096db93db0069d100b5ca96191a</sys_update_name>
+        <sys_updated_by>bkeener</sys_updated_by>
+        <sys_updated_on>2018-09-26 21:59:51</sys_updated_on>
+        <template><![CDATA[<div ng-if="!data.isValid && !data.emptyStateTemplate" class="panel panel-default">
+  <div class="panel-body wrapper-lg text-center">
+    <span ng-if="!data.tableUnsupported">${Record not found}</span>
+    <span ng-if="data.tableUnsupported">${Form view not supported for requested table}</span>
+  </div>
+</div>
+<div ng-if="!data.isValid && data.emptyStateTemplate" class="panel-shift">
+  <div class="empty-state-wrapper panel panel-default" ng-include="data.emptyStateTemplate"></div>
+</div>
+<div ng-if="data.isValid" class="panel-shift">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <fieldset >
+        <legend class="h4">Document</legend>
+          <div class="row">
+            <!-- Create Labels and fields for specified parameters -->
+            <div ng-repeat="field in data.metadatafields | filter:c.filterMetadataFields" class="col-md-6">
+              <div id="{{field.name}}">
+                <div class="form-group">
+                  <label class="field-label" for="sp_formfield_{{field.name}}" title="">
+                    <span class="field-decorations"></span>
+                    <span ng-bind="field.name"></span>
+                  </label>
+                  <span class="type-string field-actual" ng-class="{'state-mandatory': field.mandatory, 'state-readonly': field.read_only, 'state-hidden': field.hidden}"></span>
+                  <span>
+                    <input ng-if="!field.max_length || 256 > field.max_length" name="{{field.name}}" id="sp_formfield_{{field.name}}" class="form-control" maxlength="250" ng-readonly="field.read_only" type="string" ng-value="field.value">
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      <div class="link" ng-if="data.doc_url != null">
+        <label class="field-label" for="documentLink">
+          <span>Document Link</span>
+        </label>
+      <div>
+          <a href="{{data.doc_url}}" name="documentLink" target="_blank">{{data.doc_url}}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  ]]></template>
+    </sp_widget>
+</record_update>

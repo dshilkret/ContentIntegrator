@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_embedded_help_role">
+    <sys_embedded_help_role action="INSERT_OR_UPDATE">
+        <order>1000</order>
+        <role display_value="x_dtll2_contentint.DocIntegrator_Document_User" name="x_dtll2_contentint.DocIntegrator_Document_User">9baca592db8e130069d100b5ca9619bf</role>
+        <sys_class_name>sys_embedded_help_role</sys_class_name>
+        <sys_created_by>dshilkret</sys_created_by>
+        <sys_created_on>2018-05-15 16:11:43</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>93aca592db8e130069d100b5ca9619c1</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>9baca592db8e130069d100b5ca9619bf</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sys_embedded_help_role_93aca592db8e130069d100b5ca9619c1</sys_update_name>
+        <sys_updated_by>dshilkret</sys_updated_by>
+        <sys_updated_on>2018-05-15 16:11:43</sys_updated_on>
+    </sys_embedded_help_role>
+</record_update>

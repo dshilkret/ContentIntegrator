@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_dtll2_contentint.GetDocuments</api_name>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>GetDocuments</name>
+        <script><![CDATA[var GetDocuments = new Class.create();
+GetDocuments.prototype =  {
+	initialize: function() {
+		
+	},
+	type: 'GetDocuments',
+	getDocuments: function(){
+		/* this uses the microsoft graph API urls for O365*/
+		var gat = new GetAccessTkn();
+		
+		var token = gat.getAccessTokenByOAuthName(gs.getProperty('x_dtll2_contentint.oauth_name'), {
+			"grant_type": gs.getProperty('x_dtll2_contentint.param_head_v1'),
+			"client_id": gs.getProperty('x_dtll2_contentint.param_head_v2'),
+			"client_secret": gs.getProperty('x_dtll2_contentint.param_head_v3'),
+			"resource": gs.getProperty('x_dtll2_contentint.param_head_v4')
+		}).token;
+		
+		var r = new sn_ws.RESTMessageV2();
+		
+		var url = gs.getProperty('x_dtll2_contentint.sp_base_1')+gs.getProperty('x_dtll2_contentint.sp_relative_4')+gs.getProperty('x_dtll2_contentint.sp_suffix_4');
+		
+		r.setHttpMethod('get');
+		r.setEndpoint(url);
+		r.setRequestHeader('Authorization',gs.getProperty('x_dtll2_contentint.req_head_v4')+token);
+		r.setRequestHeader('Content-Type',gs.getProperty('x_dtll2_contentint.req_head_v3'));
+		var response = r.execute();
+		data.messages = [];
+		var spayload = response.getBody();
+		var payload = JSON.parse(spayload);
+		//Hard coded  url base - need to make this dynamic for the domain. ':x:/r/_layouts/15/WopiFrame.aspx?sourcedoc=' needs to be static
+		var base = gs.getProperty('x_dtll2_contentint.sp_base_2')+gs.getProperty('x_dtll2_contentint.sp_relative_5');
+		var action = gs.getProperty('x_dtll2_contentint.sp_suffix_5');
+		var fieldName = gs.getProperty('x_dtll2_contentint.sp_integration_field');
+		
+		for(var i in payload.value){
+			
+			//var TaskId = payload.value[i].fields.TaskId;
+			var ItemID = payload.value[i].fields [fieldName];
+			var FileLeafRef = payload.value[i].fields.FileLeafRef;
+			
+			var eTag = payload.value[i].eTag;
+			var eTagTrunc = JSON.stringify(eTag);
+			var eTagSliced = eTagTrunc.slice(3, 39);
+			
+			var spid = payload.value[i].fields.id;
+			
+			var urlX = base + '{' + eTagSliced + '}' + action;
+				
+				
+				items = {};
+					
+					items.name = FileLeafRef;
+					
+					items.url = urlX;
+					//items.taskid = TaskId;
+					items.itemid = ItemID;
+					data.messages.push(items);
+					
+					
+				}
+				return data.messages;
+				
+			},
+			getDocumentsFiltered: function(name, value){
+				/* this uses the microsoft graph API urls for O365*/
+				var gat = new GetAccessTkn();
+				var token = gat.getAccessTokenByOAuthName(gs.getProperty('x_dtll2_contentint.oauth_name'), {
+					"grant_type": gs.getProperty('x_dtll2_contentint.param_head_v1'),
+					"client_id": gs.getProperty('x_dtll2_contentint.param_head_v2'),
+					"client_secret": gs.getProperty('x_dtll2_contentint.param_head_v3'),
+					"resource": gs.getProperty('x_dtll2_contentint.param_head_v4')
+				}).token;
+				
+				var r = new sn_ws.RESTMessageV2();
+				
+				var url = gs.getProperty('x_dtll2_contentint.sp_base_1') + gs.getProperty('x_dtll2_contentint.sp_relative_4') + gs.getProperty('x_dtll2_contentint.sp_suffix_4');
+				
+				r.setHttpMethod('get');
+				r.setEndpoint(url);
+				r.setRequestHeader('Authorization',gs.getProperty('x_dtll2_contentint.req_head_v4')+token);
+				r.setRequestHeader('Content-Type',gs.getProperty('x_dtll2_contentint.req_head_v3'));
+				var response = r.execute();
+				data.messages = [];
+				var spayload = response.getBody();
+
+				var payload = JSON.parse(spayload);
+
+				//Hard coded  url base - need to make this dynamic for the domain. ':x:/r/_layouts/15/WopiFrame.aspx?sourcedoc=' needs to be static
+				var base = gs.getProperty('x_dtll2_contentint.sp_base_2') + gs.getProperty('x_dtll2_contentint.sp_relative_5');				
+				var action = gs.getProperty('x_dtll2_contentint.sp_suffix_5');	            
+				var fieldName = gs.getProperty('x_dtll2_contentint.sp_integration_field');
+				for(var i in payload.value){
+					
+					//var TaskId = payload.value[i].fields.TaskId;
+					var ItemID = payload.value[i].fields [fieldName];
+					var FileLeafRef = payload.value[i].fields.FileLeafRef;
+					var eTag = payload.value[i].eTag;
+					var eTagTrunc = JSON.stringify(eTag);
+					var eTagSliced = eTagTrunc.slice(3, 39);
+					
+					var spid = payload.value[i].fields.id;
+					
+					var urlX = base + '{' + eTagSliced + '}' + action;
+						
+						
+						items = {};
+							
+							items.name = FileLeafRef;
+							items.url = urlX;
+							//items.taskid = TaskId;
+							items.itemid = ItemID;
+							items.spitemid = spid;
+							for(var f in payload.value[i].fields){
+								if(items[f] == null) //not already set
+									items[f] = payload.value[i].fields[f];
+								
+							}
+							
+							
+							if(items[name] == value){  //filter on the provided name/value pair
+								data.messages.push(items);
+							}
+							
+							
+						}
+						return data.messages;
+						
+					},
+	getDocumentsRESTFiltered: function(name, value, token){
+				gs.addInfoMessage('getDocumentsRESTFiltered start');
+				var r = new sn_ws.RESTMessageV2();
+				
+				var url = gs.getProperty('x_dtll2_contentint.sp_base_1') + gs.getProperty('x_dtll2_contentint.sp_relative_4') + gs.getProperty('x_dtll2_contentint.sp_suffix_4');
+				
+				r.setHttpMethod('get');
+				r.setEndpoint(url);
+				r.setRequestHeader('Authorization',gs.getProperty('x_dtll2_contentint.req_head_v4')+token);
+				r.setRequestHeader('Content-Type',gs.getProperty('x_dtll2_contentint.req_head_v3'));
+				var response = r.execute();
+				data.messages = [];
+				var spayload = response.getBody();
+
+				var payload = JSON.parse(spayload);
+				gs.addInfoMessage('getDocumentsRESTFiltered got payload');
+				//Hard coded  url base - need to make this dynamic for the domain. ':x:/r/_layouts/15/WopiFrame.aspx?sourcedoc=' needs to be static
+				var base = gs.getProperty('x_dtll2_contentint.sp_base_2') + gs.getProperty('x_dtll2_contentint.sp_relative_5');				
+				var action = gs.getProperty('x_dtll2_contentint.sp_suffix_5');	            
+				var fieldName = gs.getProperty('x_dtll2_contentint.sp_integration_field');
+				for(var i in payload.value){
+					
+					//var TaskId = payload.value[i].fields.TaskId;
+					var ItemID = payload.value[i].fields [fieldName];
+					var FileLeafRef = payload.value[i].fields.FileLeafRef;
+					var eTag = payload.value[i].eTag;
+					var eTagTrunc = JSON.stringify(eTag);
+					var eTagSliced = eTagTrunc.slice(3, 39);
+					
+					var spid = payload.value[i].fields.id;
+					
+					var urlX = base + '{' + eTagSliced + '}' + action;
+						
+						
+						items = {};
+							
+							items.name = FileLeafRef;
+							items.url = urlX;
+							//items.taskid = TaskId;
+							items.itemid = ItemID;
+							items.spitemid = spid;
+							for(var f in payload.value[i].fields){
+								if(items[f] == null) //not already set
+									items[f] = payload.value[i].fields[f];
+								
+							}
+							
+							
+							if(items[name] == value){  //filter on the provided name/value pair
+								data.messages.push(items);
+							}
+							
+							
+						}
+						gs.addInfoMessage('getDocumentsRESTFiltered returning messages: '+data.messages.length);
+						return data.messages;
+						
+					}
+				};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>dshilkret</sys_created_by>
+        <sys_created_on>2018-06-28 19:44:21</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>ff5cf4e4db8f130069d100b5ca9619dc</sys_id>
+        <sys_mod_count>46</sys_mod_count>
+        <sys_name>GetDocuments</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sys_script_include_ff5cf4e4db8f130069d100b5ca9619dc</sys_update_name>
+        <sys_updated_by>bkeener</sys_updated_by>
+        <sys_updated_on>2018-09-26 21:57:47</sys_updated_on>
+    </sys_script_include>
+</record_update>

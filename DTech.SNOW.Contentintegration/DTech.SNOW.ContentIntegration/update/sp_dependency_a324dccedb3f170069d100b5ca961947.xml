@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_dependency">
+    <sp_dependency action="INSERT_OR_UPDATE">
+        <module/>
+        <name>Discover Tasker SP Dependency</name>
+        <page_load>false</page_load>
+        <sp_portals/>
+        <sys_class_name>sp_dependency</sys_class_name>
+        <sys_created_by>bkeener</sys_created_by>
+        <sys_created_on>2018-08-09 14:57:09</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>a324dccedb3f170069d100b5ca961947</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Discover Tasker SP Dependency</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sp_dependency_a324dccedb3f170069d100b5ca961947</sys_update_name>
+        <sys_updated_by>bkeener</sys_updated_by>
+        <sys_updated_on>2018-08-09 14:57:09</sys_updated_on>
+    </sp_dependency>
+</record_update>

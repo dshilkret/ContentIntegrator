@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_ng_template">
+    <sp_ng_template action="INSERT_OR_UPDATE">
+        <id>modalTemplate</id>
+        <sp_widget display_value="Document Integration Item Form">7c8abd1edb17db0069d100b5ca961920</sp_widget>
+        <sys_class_name>sp_ng_template</sys_class_name>
+        <sys_created_by>bkeener</sys_created_by>
+        <sys_created_on>2018-07-18 14:10:55</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>e9a672f6db571f0069d100b5ca9619cd</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>modalTemplate</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sp_ng_template_e9a672f6db571f0069d100b5ca9619cd</sys_update_name>
+        <sys_updated_by>bkeener</sys_updated_by>
+        <sys_updated_on>2018-07-18 14:10:55</sys_updated_on>
+        <template><![CDATA[<script type="text/ng-template" id="modalTemplate">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="panel-title">Upload to SharePoint</h4>
+  		</div>
+		<div class="panel-body wrapper-xl">
+				<div>
+          <input type="file" id="my-file">
+          <input type="button" ng-click="uploadSP()" value="Upload">
+          <span ng-bind="data.stuff"></span>
+				</div>
+  		</div>
+		<div class="panel-footer text-right">
+			<button class="btn btn-primary" ng-click="c.closeModal()">${Close}</button>
+		</div>
+	</div>
+</script>]]></template>
+    </sp_ng_template>
+</record_update>

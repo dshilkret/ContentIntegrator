@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_dtll2_contentint.GetAccessTkn</api_name>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>GetAccessTkn</name>
+        <script><![CDATA[//------------------------------------------------------------------------------------------------------------------------
+// COMPANY: DISCOVER TECHNOLOGIES
+// CUSTOMIZED BY: David Shilkret
+// WIDGET BASE: FORM
+//------------------------------------------------------------------------------------------------------------------------
+var GetAccessTkn = new Class.create();
+GetAccessTkn.prototype =  {
+	initialize: function() {
+		
+	},
+	type: 'GetAccessTkn',
+	getAccessTkn: function(){
+		
+		
+		
+		
+		var oAuthClient = new sn_auth.GlideOAuthClient();
+		var params = {
+			"grant_type": gs.getProperty('x_dtll2_contentint.param_head_v1'),
+			"client_id": gs.getProperty('x_dtll2_contentint.param_head_v2'),
+			"client_secret": gs.getProperty('x_dtll2_contentint.param_head_v3'),
+			"resource": gs.getProperty('x_dtll2_contentint.param_head_v4')
+		};
+		var oauth_name = gs.getProperty('x_dtll2_contentint.oauth_name');
+		var tokenResponse = oAuthClient.requestToken(oauth_name,global.JSON.stringify(params));
+		var token = tokenResponse.getToken();
+		
+		data.token = token.getAccessToken();
+		
+		
+	},
+	getAccessTokenByOAuthName: function(name, params){
+		
+		var oAuthClient = new sn_auth.GlideOAuthClient();
+		if(params == null){
+			params = {
+				"grant_type": gs.getProperty('x_dtll2_contentint.param_head_v1'),
+				"client_id": gs.getProperty('x_dtll2_contentint.param_head_v2'),
+				"client_secret": gs.getProperty('x_dtll2_contentint.param_head_v3'),
+				"resource": gs.getProperty('x_dtll2_contentint.param_head_v4')
+			};
+		}
+		var tokenResponse = oAuthClient.requestToken(name,global.JSON.stringify(params));
+		var token = tokenResponse.getToken();
+		
+		var ret = {token: token.getAccessToken()};
+			return ret;
+		}
+		
+	};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>dshilkret</sys_created_by>
+        <sys_created_on>2018-07-05 23:18:13</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>06373d76db8353001919fcd6f49619a9</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>GetAccessTkn</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sys_script_include_06373d76db8353001919fcd6f49619a9</sys_update_name>
+        <sys_updated_by>btoole</sys_updated_by>
+        <sys_updated_on>2018-07-24 16:12:54</sys_updated_on>
+    </sys_script_include>
+</record_update>

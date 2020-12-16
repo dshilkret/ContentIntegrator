@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl_role">
+    <sys_security_acl_role action="INSERT_OR_UPDATE">
+        <sys_class_name>sys_security_acl_role</sys_class_name>
+        <sys_created_by>dshilkret</sys_created_by>
+        <sys_created_on>2018-05-15 16:10:56</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>3b7ca9d2db8e130069d100b5ca9619a8</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_dtll2_contentint_contentintegration_task.x_dtll2_contentint.contentintegration_task_user</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_security_acl display_value="x_dtll2_contentint_contentintegration_task">ff7ca9d2db8e130069d100b5ca9619a5</sys_security_acl>
+        <sys_update_name>sys_security_acl_role_3b7ca9d2db8e130069d100b5ca9619a8</sys_update_name>
+        <sys_updated_by>dshilkret</sys_updated_by>
+        <sys_updated_on>2018-05-15 16:10:56</sys_updated_on>
+        <sys_user_role display_value="x_dtll2_contentint.DocIntegrator_Task_User" name="x_dtll2_contentint.DocIntegrator_Task_User">b77c2992db8e130069d100b5ca961969</sys_user_role>
+        <transaction_id/>
+    </sys_security_acl_role>
+</record_update>

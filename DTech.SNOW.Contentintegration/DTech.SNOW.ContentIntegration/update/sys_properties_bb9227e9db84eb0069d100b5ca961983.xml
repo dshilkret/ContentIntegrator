@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices>{ "FileLeafRef": "Name", "TaskId": "Task", "url": "Url" }</choices>
+        <description>Display Names for SharePoint Metadata Properties</description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_dtll2_contentint.sp_col_label_json</name>
+        <read_roles/>
+        <suffix>sp_col_label_json</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>bkeener</sys_created_by>
+        <sys_created_on>2018-08-21 02:57:35</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>bb9227e9db84eb0069d100b5ca961983</sys_id>
+        <sys_mod_count>14</sys_mod_count>
+        <sys_name>x_dtll2_contentint.sp_col_label_json</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sys_properties_bb9227e9db84eb0069d100b5ca961983</sys_update_name>
+        <sys_updated_by>bkeener</sys_updated_by>
+        <sys_updated_on>2018-08-29 20:26:48</sys_updated_on>
+        <type>string</type>
+        <value>{ "FileLeafRef": "Name", "IncidentID": "Incident", "url": "Url" }</value>
+        <write_roles/>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=bb9227e9db84eb0069d100b5ca961983"/>
+</record_update>

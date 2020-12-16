@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_dtll2_contentint.dt adal api v0.5.0</name>
+        <script><![CDATA[var DTTaskerADAL = (function () {
+    var _instance = null;
+
+    DTTaskerADAL = function () {
+        return DTTaskerADAL.prototype._instance;
+    };
+
+    DTTaskerADAL = function (clientId, tenant, spUri) {
+        this.config = {
+            'tenant': tenant,
+            'clientId': clientId,
+            //'redirectUri': window.location.origin + '/',
+            //'postLogoutRedirectUri': window.location.origin + '/',
+            'endpoints': {
+                'graphApiUri': 'https://graph.microsoft.com',
+                'sharePointUri': spUri
+            },
+            'cacheLocation': 'localStorage',
+            popUp: true,
+            displayCall: function (urlNavigate) {
+                var loginUrl = urlNavigate;
+                var actx = this;
+                //$sce.trustAsResourceUrl(loginUrl);
+                //$scope.url = loginUrl;
+                var popupWindow = window.open(loginUrl, "login", 'width=483, height=600');
+                if (popupWindow && popupWindow.focus)
+                    popupWindow.focus();
+                var registeredRedirectUri = this.redirectUri;
+
+                var pollTimer = window.setInterval(function () {
+                    if (!popupWindow || popupWindow.closed || popupWindow.closed === undefined) {
+                        window.clearInterval(pollTimer);
+                        authWait = false;
+                    }
+                    //try {
+                        if (popupWindow.document.URL.indexOf(registeredRedirectUri) != -1) {
+                            window.clearInterval(pollTimer);
+
+                            var dta = new DTTaskerADAL();
+
+                            if (dta.authContext.isCallback(popupWindow.location.hash)) {
+                                var reqInfo = dta.authContext.getRequestInfo(popupWindow.location.hash);
+
+
+
+                                dta.authContext.saveTokenFromHash(reqInfo);
+
+                                //window.location = authContext._getItem(authContext.CONSTANTS.STORAGE.LOGIN_REQUEST);
+                                //authContext.login();
+                                //authContext.saveTokenFromHash(popupWindow.location.hash);
+                            }
+
+                            var userctx = dta.authContext.getCachedUser();
+                            window.location.hash = popupWindow.location.hash;
+
+                            window.postMessage(popupWindow.location.hash, window.location.origin);
+
+                            popupWindow.close();
+                        }
+                    //} catch (e) {
+                    //}
+                }, 20);
+            }
+        };
+
+        if (DTTaskerADAL.prototype._instance) {
+            return DTTaskerADAL.prototype._instance;
+        }
+
+        this.authContext = new AuthenticationContext(this.config);
+
+        DTTaskerADAL.prototype._instance = this;
+
+        return DTTaskerADAL.prototype._instance;
+    };
+
+    DTTaskerADAL.prototype.context = new function () {
+        return DTTaskerADAL.prototype._instance;
+    };
+
+    DTTaskerADAL.prototype.log = function (msg) {
+    };
+
+    DTTaskerADAL.prototype.validateUser = function () {
+        var user = this.authContext.getCachedUser();
+
+        // no user found
+        if (user == null) {
+            this.authContext.login();
+
+            // todo: come up with a cleaner auth check
+            user = this.authContext.getCachedUser();
+        }
+
+        return user;
+    };
+
+    DTTaskerADAL.prototype.getToken = function (callback) {
+        var user = this.validateUser();
+        
+        // no user found
+        if (user != null) {
+            // ensure we have made the token request
+            this.authContext.acquireToken(this.authContext.config.endpoints.sharePointUri, function (error, token) {
+                if (error) {
+
+                    // todo: ref a singletone instance
+                    var authContext = new AuthenticationContext();
+
+                    // cheesy
+                    if (error == 'Token renewal operation failed due to timeout') {
+                        authContext.acquireTokenPopup(authContext.config.endpoints.sharePointUri, null, null, function (error, token) {
+                            if (error) {
+                            }
+                            else {
+                                // authorization
+                                var bearer = 'Bearer ' + token;
+
+                                if (callback != null) {
+                                    callback(bearer);
+                                }
+                            }
+                        });
+                    }
+                }
+                else {
+                    // authorization
+                    var bearer = 'Bearer ' + token;
+
+                    if (callback != null) {
+                        callback(bearer);
+                    }
+                }
+            });
+        }
+
+        return user;
+    };
+
+    return DTTaskerADAL;
+}());]]></script>
+        <script_name>dt adal api v0.5.0</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>bkeener</sys_created_by>
+        <sys_created_on>2018-08-13 20:31:05</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>9707ce13db7bdb001919fcd6f4961999</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>x_dtll2_contentint.dt adal api v0.5.0</sys_name>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sys_ui_script_9707ce13db7bdb001919fcd6f4961999</sys_update_name>
+        <sys_updated_by>bkeener</sys_updated_by>
+        <sys_updated_on>2018-09-26 21:58:54</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

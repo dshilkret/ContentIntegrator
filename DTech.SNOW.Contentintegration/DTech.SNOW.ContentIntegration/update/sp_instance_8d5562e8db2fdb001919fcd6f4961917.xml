@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_instance">
+    <sp_instance action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <class_name/>
+        <color>default</color>
+        <css/>
+        <glyph/>
+        <id/>
+        <order>0</order>
+        <roles/>
+        <short_description/>
+        <size>md</size>
+        <sp_column display_value="2">28c5a6e8db2fdb001919fcd6f4961914</sp_column>
+        <sp_widget display_value="Document Integration Document Preview">f8b67096db93db0069d100b5ca96191a</sp_widget>
+        <sys_class_name>sp_instance</sys_class_name>
+        <sys_created_by>bkeener</sys_created_by>
+        <sys_created_on>2018-07-23 23:24:03</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>8d5562e8db2fdb001919fcd6f4961917</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="DocIntegrator" source="x_dtll2_contentint">5f1c2992db8e130069d100b5ca96195f</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="DocIntegrator">5f1c2992db8e130069d100b5ca96195f</sys_scope>
+        <sys_update_name>sp_instance_8d5562e8db2fdb001919fcd6f4961917</sys_update_name>
+        <sys_updated_by>bkeener</sys_updated_by>
+        <sys_updated_on>2018-08-16 18:15:37</sys_updated_on>
+        <title/>
+        <url/>
+        <widget_parameters><![CDATA[{
+	"disableUIActions": {
+		"value": "",
+		"displayValue": ""
+	},
+	"showFormView": {
+		"value": "",
+		"displayValue": ""
+	},
+	"omitHeaderOptions": {
+		"value": "",
+		"displayValue": ""
+	},
+	"columns_to_show": {
+		"value": "name,taskid,url",
+		"displayValue": "name,taskid,url"
+	},
+	"disable_iframe": {
+		"value": "false",
+		"displayValue": "false"
+	}
+}]]></widget_parameters>
+    </sp_instance>
+</record_update>
